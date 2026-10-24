@@ -1,0 +1,669 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getResumeConfig, getSeo, getSiteConfig } from '../lib/config';
+import { cefrLevel, contactLine, fluencyToCefr, getResume } from '../lib/resume';
+
+const site = getSiteConfig();
+const seo = getSeo();
+const resume = getResume();
+const config = getResumeConfig();
+
+const title = seo.pages['/resume']?.title ?? `Résumé — ${site.name}`;
+const description = seo.pages['/resume']?.description ?? seo.default.description;
+
+const showToggle = config.allow_visitor_toggle;
+const active = config.active;
+const basics = resume.basics;
+const line = contactLine(resume);
+const languages = resume.languages.map((language) => ({
+  ...language,
+  cefr: fluencyToCefr(language.fluency),
+  level: cefrLevel(language.fluency),
+}));
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="resume-head">
+    <div class="shell head-row">
+      <div>
+        <p class="eyebrow">Résumé</p>
+        <h1 class="display">{basics.name}</h1>
+        <p class="role-line">{basics.label} · open to internships and junior roles</p>
+      </div>
+      <div class="head-actions no-print">
+        {showToggle && (
+          <div class="switch" role="group" aria-label="Résumé template">
+            <input type="radio" name="template" id="tpl-standard" value="standard" checked={active === 'standard'} />
+            <input type="radio" name="template" id="tpl-europass" value="europass" checked={active === 'europass'} />
+            <label for="tpl-standard">{config.templates.standard.label}</label>
+            <label for="tpl-europass">{config.templates.europass.label}</label>
+          </div>
+        )}
+        <button class="btn btn-primary" type="button" data-print>
+          Download PDF
+          <span aria-hidden="true">↓</span>
+        </button>
+      </div>
+    </div>
+    <div class="shell">
+      <p class="print-hint no-print mono">
+        “Download PDF” opens the print dialog — choose “Save as PDF”. The page is already A4.
+      </p>
+    </div>
+  </section>
+
+  <div class="shell resume-wrap" data-active={active}>
+    <article class="doc doc-standard" data-template="standard">
+      <header class="doc-head">
+        <div>
+          <h2>{basics.name}</h2>
+          <p class="doc-role">{basics.label}</p>
+        </div>
+        <address>
+          <p>{line}</p>
+          <p class="links">
+            {basics.profiles.map((profile) => (
+              <a href={profile.url}>{profile.network}: {profile.username}</a>
+            ))}
+          </p>
+        </address>
+      </header>
+
+      <section class="doc-section">
+        <h3>Profile</h3>
+        <p class="summary">{basics.summary}</p>
+      </section>
+
+      <section class="doc-section">
+        <h3>Selected projects</h3>
+        {resume.projects.map((project) => (
+          <div class="entry">
+            <div class="entry-head">
+              <h4>{project.name}</h4>
+              {project.url && <a class="entry-link" href={project.url}>{project.url.replace('https://', '')}</a>}
+            </div>
+            <p class="entry-desc">{project.description}</p>
+            {project.highlights && (
+              <ul class="bullets">
+                {project.highlights.map((highlight) => <li>{highlight}</li>)}
+              </ul>
+            )}
+            {project.keywords && <p class="entry-tech mono">{project.keywords.join(' · ')}</p>}
+          </div>
+        ))}
+      </section>
+
+      <section class="doc-section">
+        <h3>Skills</h3>
+        <dl class="skill-grid">
+          {resume.skills.map((skill) => (
+            <div>
+              <dt>{skill.name}</dt>
+              <dd>{skill.keywords.join(', ')}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <section class="doc-section">
+        <h3>Education</h3>
+        {resume.education.map((entry) => (
+          <div class="entry">
+            <div class="entry-head">
+              <h4>{entry.studyType} {entry.area}</h4>
+              <span class="entry-date mono">{entry.endDate}</span>
+            </div>
+            <p class="entry-desc">{entry.institution}{entry.location ? ` · ${entry.location}` : ''}</p>
+          </div>
+        ))}
+      </section>
+
+      <section class="doc-section">
+        <h3>Languages</h3>
+        <ul class="language-list">
+          {languages.map((language) => (
+            <li><span>{language.language}</span> <span class="mono">{language.fluency} · {language.cefr}</span></li>
+          ))}
+        </ul>
+      </section>
+    </article>
+
+    <article class="doc doc-europass" data-template="europass">
+      <header class="euro-head">
+        <div>
+          <p class="euro-label mono">Curriculum Vitae</p>
+          <h2>{basics.name}</h2>
+          <p class="doc-role">{basics.label}</p>
+        </div>
+        <div class="euro-contact">
+          <p>{basics.email}</p>
+          <p>{basics.location?.city}{basics.location?.countryCode ? `, ${basics.location.countryCode}` : ''}</p>
+          {basics.profiles.map((profile) => <p>{profile.network}: {profile.username}</p>)}
+        </div>
+      </header>
+
+      <div class="euro-grid">
+        <aside class="euro-side">
+          <section>
+            <h3>Personal information</h3>
+            <p>{basics.name}</p>
+            <p>{basics.email}</p>
+            <p>{basics.location?.city}{basics.location?.countryCode ? `, ${basics.location.countryCode}` : ''}</p>
+          </section>
+
+          <section>
+            <h3>Languages</h3>
+            {languages.map((language) => (
+              <div class="euro-lang">
+                <p>{language.language} <span class="mono">{language.cefr}</span></p>
+                <div class="cefr" aria-hidden="true">
+                  {[1, 2, 3, 4, 5, 6].map((step) => <span class:list={[{ filled: step <= language.level }]}></span>)}
+                </div>
+              </div>
+            ))}
+          </section>
+
+          <section>
+            <h3>Digital skills</h3>
+            <p>{resume.skills.find((skill) => skill.name === 'Tooling')?.keywords.join(', ')}</p>
+          </section>
+        </aside>
+
+        <div class="euro-main">
+          <section>
+            <h3>Profile</h3>
+            <p class="summary">{basics.summary}</p>
+          </section>
+
+          <section>
+            <h3>Project experience</h3>
+            {resume.projects.map((project) => (
+              <div class="entry">
+                <div class="entry-head">
+                  <h4>{project.name}</h4>
+                  {project.keywords && <span class="entry-date mono">{project.keywords.join(', ')}</span>}
+                </div>
+                <p class="entry-desc">{project.description}</p>
+                {project.highlights && (
+                  <ul class="bullets">
+                    {project.highlights.map((highlight) => <li>{highlight}</li>)}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </section>
+
+          <section>
+            <h3>Education and training</h3>
+            {resume.education.map((entry) => (
+              <div class="entry">
+                <div class="entry-head">
+                  <h4>{entry.studyType} {entry.area}</h4>
+                  <span class="entry-date mono">{entry.endDate}</span>
+                </div>
+                <p class="entry-desc">{entry.institution}</p>
+              </div>
+            ))}
+          </section>
+
+          <section>
+            <h3>Skills</h3>
+            <dl class="skill-grid">
+              {resume.skills.map((skill) => (
+                <div>
+                  <dt>{skill.name}</dt>
+                  <dd>{skill.keywords.join(', ')}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <script is:inline src="/resume.js" defer></script>
+</BaseLayout>
+
+<style>
+  .resume-head {
+    padding-top: clamp(2rem, 5vw, 3.5rem);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .head-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .resume-head h1 {
+    margin-top: 0.3rem;
+  }
+
+  .role-line {
+    margin-top: 0.4rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .head-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .switch {
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: color-mix(in oklab, var(--text) 4%, transparent);
+  }
+
+  .switch input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .switch label {
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.76rem;
+    color: var(--muted);
+    cursor: pointer;
+    min-height: 34px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .switch input:checked + input + label,
+  .switch input:checked + label {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .switch input:focus-visible + label,
+  .switch input:focus-visible + input + label {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .print-hint {
+    margin-top: var(--space-xs);
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+
+  .resume-wrap {
+    padding-top: var(--space-lg);
+  }
+
+  /* Template switching is pure CSS: checked radios + sibling selectors.
+     data-active is the no-JS / toggle-disabled default. */
+  .doc-europass { display: none; }
+  .resume-wrap[data-active='europass'] .doc-standard { display: none; }
+  .resume-wrap[data-active='europass'] .doc-europass { display: block; }
+  .resume-wrap:has(#tpl-standard:checked) .doc-standard { display: block; }
+  .resume-wrap:has(#tpl-standard:checked) .doc-europass { display: none; }
+  .resume-wrap:has(#tpl-europass:checked) .doc-standard { display: none; }
+  .resume-wrap:has(#tpl-europass:checked) .doc-europass { display: block; }
+
+  .doc {
+    max-width: 52rem;
+    margin-inline: auto;
+    padding: clamp(1.2rem, 4vw, 2.4rem);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    color: var(--text);
+  }
+
+  .doc-head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px solid var(--text);
+  }
+
+  .doc-head h2 {
+    font-size: var(--step-2);
+    letter-spacing: -0.03em;
+  }
+
+  .doc-role {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
+  }
+
+  .doc-head address {
+    font-style: normal;
+    text-align: right;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .doc-head address a {
+    color: var(--muted);
+    display: block;
+  }
+
+  .doc-section {
+    padding-top: var(--space-md);
+  }
+
+  .doc-section h3,
+  .euro-main h3,
+  .euro-side h3 {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .summary {
+    font-size: 0.86rem;
+    line-height: 1.65;
+    color: color-mix(in oklab, var(--text) 88%, var(--muted));
+  }
+
+  .entry {
+    padding-block: 0.6rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .entry:first-of-type {
+    border-top: 0;
+  }
+
+  .entry-head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+
+  .entry h4 {
+    font-size: 0.92rem;
+    font-weight: 600;
+  }
+
+  .entry-link,
+  .entry-date {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+
+  .entry-desc {
+    margin-top: 0.2rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .bullets {
+    margin: 0.35rem 0 0;
+    padding-left: 1.05rem;
+    display: grid;
+    gap: 0.2rem;
+    font-size: 0.8rem;
+    color: color-mix(in oklab, var(--text) 85%, var(--muted));
+    line-height: 1.5;
+  }
+
+  .bullets li::marker {
+    color: var(--accent);
+  }
+
+  .entry-tech {
+    margin-top: 0.3rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+
+  .skill-grid {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0;
+  }
+
+  .skill-grid > div {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .skill-grid dt {
+    font-family: var(--font-mono);
+    font-size: 0.67rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 0.1rem;
+  }
+
+  .skill-grid dd {
+    margin: 0;
+    color: color-mix(in oklab, var(--text) 86%, var(--muted));
+  }
+
+  .language-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    font-size: 0.82rem;
+  }
+
+  .language-list .mono {
+    color: var(--muted);
+  }
+
+  /* ── Europass ───────────────────────────────────────────────────────────── */
+  .euro-head {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .euro-label {
+    font-size: 0.64rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .euro-head h2 {
+    font-size: var(--step-1);
+    margin-top: 0.2rem;
+  }
+
+  .euro-contact {
+    text-align: right;
+    font-size: 0.76rem;
+    color: var(--muted);
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .euro-grid {
+    display: grid;
+    gap: var(--space-md);
+    padding-top: var(--space-sm);
+  }
+
+  .euro-side {
+    display: grid;
+    gap: var(--space-sm);
+    align-content: start;
+    padding-right: var(--space-sm);
+    border-right: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .euro-side section p {
+    margin-bottom: 0.15rem;
+  }
+
+  .euro-lang p {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.76rem;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+  }
+
+  .cefr {
+    display: flex;
+    gap: 3px;
+    margin-bottom: 0.5rem;
+  }
+
+  .cefr span {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+  }
+
+  .cefr span.filled {
+    background: var(--accent);
+  }
+
+  .euro-main {
+    display: grid;
+    gap: var(--space-sm);
+    align-content: start;
+  }
+
+  @media (min-width: 800px) {
+    .euro-grid {
+      grid-template-columns: 13rem 1fr;
+      gap: var(--space-md);
+    }
+  }
+
+  /* ── Print: the résumé is the product here, so print gets first-class CSS ── */
+  @media print {
+    :root {
+      --bg: white;
+      --surface: white;
+      --surface-elevated: white;
+      --text: black;
+      --muted: dimgray;
+      --border: silver;
+      --accent: black;
+    }
+
+    :global(body) {
+      background: white !important;
+    }
+
+    :global(body)::before,
+    :global(body)::after {
+      display: none !important;
+    }
+
+    :global(.site-header),
+    :global(.site-footer),
+    :global(.skip-link),
+    .no-print,
+    .print-hint {
+      display: none !important;
+    }
+
+    .resume-head {
+      padding: 0 0 0.5rem;
+      border: 0;
+    }
+
+    .resume-head h1 {
+      font-size: 18pt;
+    }
+
+    .role-line {
+      font-size: 9pt;
+    }
+
+    .resume-wrap {
+      padding: 0;
+      max-width: none;
+    }
+
+    .doc {
+      max-width: none;
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      border-radius: 0;
+      background: white;
+    }
+
+    .doc-head {
+      border-bottom: 1.5pt solid black;
+    }
+
+    .doc-section {
+      break-inside: avoid;
+    }
+
+    .entry {
+      break-inside: avoid;
+    }
+
+    .summary,
+    .entry-desc,
+    .bullets,
+    .skill-grid dd {
+      color: black;
+      font-size: 9.5pt;
+    }
+
+    .doc-role,
+    .doc-head address,
+    .doc-head address a,
+    .entry-link,
+    .entry-date,
+    .entry-tech,
+    .doc-section h3,
+    .euro-main h3,
+    .euro-side h3,
+    .language-list .mono {
+      color: black;
+    }
+
+    .doc-section h3,
+    .euro-main h3,
+    .euro-side h3 {
+      border-bottom: 0.5pt solid black;
+      padding-bottom: 2pt;
+    }
+
+    @page {
+      size: A4;
+      margin: 14mm;
+    }
+  }
+</style>
