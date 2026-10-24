@@ -1,0 +1,12 @@
+# Copy for the AI assistant. The Worker reads the same file at build time, so
+# changing a string here changes the assistant without a code review.
+enabled: false
+greeting: Hi — I'm the assistant for this site. I answer from Naimul's public work only.
+suggested_questions:
+  - Which project best shows his ML work?
+  - What is he looking for right now?
+  - Which stack does he actually use?
+  - How was this site built?
+rate_limit_text: That is the daily limit for this browser. Email naim.islam8761@gmail.com and I will reply there.
+fallback_text: The assistant is offline right now. Email naim.islam8761@gmail.com — it reaches the same person.
+disclosure: Answers are generated from this site's content by a language model. They can be wrong; the linked pages cannot.
