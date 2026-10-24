@@ -1,0 +1,30 @@
+# Identity, availability and feature flags — the footer and SEO read this file.
+name: Md Naimul Islam
+short_name: Naimul
+role: AI/ML Engineer
+role_line: AI/ML Engineer · Python · FastAPI
+tagline: I build models and the APIs that make them useful.
+location: Bangladesh
+timezone: Asia/Dhaka
+email: naim.islam8761@gmail.com
+
+availability: open # open | busy | hidden
+availability_text: Open to internships and junior AI/ML roles
+
+socials:
+  github: https://github.com/naimul3103
+  linkedin: https://www.linkedin.com/in/naimul3103/
+
+footer:
+  copyright: Md Naimul Islam
+  signature: Designed and built from scratch — Astro, TypeScript, zero servers.
+  note: Content lives in git. Every commit is a deployment.
+
+# Feature flags: every integration can be switched off without a code change.
+flags:
+  search: true
+  feed: true
+  comments: "off" # on | per_post | off — requires giscus setup first
+  og_images: true
+  now_page: true
+  chat: false # Phase 6 — the Worker is scaffolded, not deployed

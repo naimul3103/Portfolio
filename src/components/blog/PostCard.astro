@@ -1,0 +1,153 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getBlogPage } from '../../lib/config';
+import { formatDate, readingTime } from '../../lib/format';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  compact?: boolean;
+}
+
+const { post, compact = false } = Astro.props;
+const labels = getBlogPage().labels;
+const categories = getBlogPage().categories;
+const data = post.data;
+const href = `/blog/${post.id}`;
+---
+
+<article class:list={['post-row', { compact }]}>
+  <div class="meta-col">
+    <time class="mono date" datetime={data.pubDate.toISOString()}>{formatDate(data.pubDate)}</time>
+    <span class="mono read">{readingTime(post.body ?? '')} {labels.read_time}</span>
+  </div>
+
+  <div class="body-col">
+    <div class="title-line">
+      <h3><a href={href}>{data.title}</a></h3>
+      {data.aiGenerated && <span class="tag tag-accent" title={labels.ai_disclosure}>AI</span>}
+    </div>
+    <p class="description">{data.description}</p>
+    <div class="foot">
+      <span class="category mono">{categories[data.category] ?? data.category}</span>
+      <ul class="tags" aria-label="Tags">
+        {data.tags.slice(0, 3).map((tag) => <li class="tag">#{tag}</li>)}
+      </ul>
+    </div>
+  </div>
+</article>
+
+<style>
+  .post-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-xs);
+    padding-block: var(--space-md);
+    border-top: 1px solid var(--border);
+  }
+
+  .post-row:first-of-type {
+    border-top: 0;
+  }
+
+  .meta-col {
+    display: flex;
+    gap: 0.9rem;
+    align-items: baseline;
+    color: var(--muted);
+  }
+
+  .date {
+    color: var(--muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .read {
+    font-size: 0.7rem;
+    color: color-mix(in oklab, var(--muted) 70%, transparent);
+  }
+
+  .body-col {
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .title-line {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  h3 {
+    font-size: var(--step-1);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+
+  h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .description {
+    color: var(--muted);
+    font-size: var(--step--1);
+    max-width: 62ch;
+    line-height: 1.6;
+  }
+
+  .foot {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+    margin-top: 0.2rem;
+  }
+
+  .category {
+    color: var(--accent);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .tags {
+    display: flex;
+    gap: 0.3rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+
+  .post-row:hover h3 {
+    color: var(--accent);
+  }
+
+  h3 {
+    transition: color var(--transition-fast);
+  }
+
+  @media (min-width: 720px) {
+    .post-row {
+      grid-template-columns: 9.5rem 1fr;
+      gap: var(--space-md);
+    }
+    .meta-col {
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+  }
+
+  .compact h3 {
+    font-size: var(--step-0);
+  }
+
+  .compact .description {
+    font-size: 0.82rem;
+  }
+</style>

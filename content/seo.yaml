@@ -1,0 +1,38 @@
+# SEO defaults and per-route overrides. An override always wins over a pattern.
+default:
+  title_suffix: Md Naimul Islam
+  description: AI/ML engineer in Bangladesh. I train models, ship FastAPI services, and document the trade-offs — case studies, notes and experiments.
+  og_image: /og/default.png
+  twitter_card: summary_large_image
+
+pages:
+  /:
+    title: Md Naimul Islam — AI/ML Engineer
+    description: I build machine-learning models and the Python APIs that make them useful. Case studies with measured outcomes, not adjectives.
+  /projects:
+    title: Work — Md Naimul Islam
+    description: Case studies from machine learning, FastAPI services and university coursework — each with the problem, the measurement and what I would change.
+  /about:
+    title: About — Md Naimul Islam
+    description: A computer science graduate in Bangladesh, focused on applied machine learning and backend engineering.
+  /blog:
+    title: Writing — Md Naimul Islam
+    description: Notes on building software, training models and the decisions behind this site.
+  /notes:
+    title: Notes — Md Naimul Islam
+    description: Short, dated observations from ongoing work. Seedlings, not essays.
+  /resume:
+    title: Résumé — Md Naimul Islam
+    description: One-page résumé, printable to PDF. AI/ML engineering, Python and FastAPI.
+  /contact:
+    title: Contact — Md Naimul Islam
+    description: Open to internships and junior AI/ML roles. Email, GitHub or LinkedIn.
+  /lab:
+    title: Lab — Md Naimul Islam
+    description: Small, honest machine-learning experiments, with the model and the limits stated up front.
+  /now:
+    title: Now — Md Naimul Islam
+    description: What I am focused on this month.
+  /gallery:
+    title: Gallery — Md Naimul Islam
+    description: Photographs, when there are photographs worth showing.

@@ -1,0 +1,155 @@
+---
+import { getNavigation, getSiteConfig } from '../../lib/config';
+import { formatDate } from '../../lib/format';
+
+const site = getSiteConfig();
+const entries = getNavigation();
+const year = new Date().getFullYear();
+const deployed = formatDate(new Date());
+const availability = site.availability === 'open';
+---
+
+<footer class="site-footer">
+  <div class="shell">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="wordmark" href="/">{site.name}</a>
+        <p class="footer-tagline">{site.tagline}</p>
+        {site.availability !== 'hidden' && (
+          <span class:list={['badge', { 'badge-dot': availability }]}>
+            {availability ? site.availability_text : 'Not available right now'}
+          </span>
+        )}
+      </div>
+
+      <nav class="footer-col" aria-label="Footer">
+        <h2>Explore</h2>
+        {entries.map((entry) => <a href={entry.url}>{entry.label}</a>)}
+      </nav>
+
+      <div class="footer-col">
+        <h2>Elsewhere</h2>
+        <a href={site.socials.github} rel="me noopener">GitHub ↗</a>
+        <a href={site.socials.linkedin} rel="me noopener">LinkedIn ↗</a>
+        <a href={`mailto:${site.email}`}>{site.email}</a>
+        <a href="/rss.xml">RSS feed</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© {year} {site.footer.copyright}</p>
+      <p class="footer-signature">{site.footer.signature}</p>
+      <p class="footer-meta mono">
+        <span>Deployed {deployed}</span>
+        <span aria-hidden="true">·</span>
+        <span>{site.footer.note}</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-4xl);
+    border-top: 1px solid var(--border);
+    background: color-mix(in oklab, var(--surface) 55%, transparent);
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+    padding-block: var(--space-2xl);
+  }
+
+  .footer-brand {
+    display: grid;
+    gap: var(--space-xs);
+    justify-items: start;
+    max-width: 32rem;
+  }
+
+  .wordmark {
+    font-size: var(--step-2);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+  }
+
+  .footer-tagline {
+    color: var(--muted);
+    max-width: 34ch;
+  }
+
+  .footer-col {
+    display: grid;
+    gap: 0.35rem;
+    align-content: start;
+  }
+
+  .footer-col h2 {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.35rem;
+  }
+
+  .footer-col a {
+    font-size: var(--step--1);
+    color: var(--muted);
+    padding-block: 0.25rem;
+    transition: color var(--transition-fast);
+    width: fit-content;
+  }
+
+  .footer-col a:hover {
+    color: var(--accent);
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-md);
+    align-items: baseline;
+    padding-block: var(--space-md);
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .footer-bottom > p {
+    margin: 0;
+  }
+
+  .footer-signature {
+    color: color-mix(in oklab, var(--muted) 85%, var(--text));
+  }
+
+  .footer-meta {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+    font-size: 0.68rem;
+  }
+
+  @media (max-width: 640px) {
+    .footer-meta {
+      margin-left: 0;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+    .footer-meta span[aria-hidden] {
+      display: none;
+    }
+  }
+
+  @media (min-width: 780px) {
+    .footer-top {
+      grid-template-columns: 1.6fr 0.7fr 1fr;
+      gap: var(--space-xl);
+    }
+  }
+</style>

@@ -1,0 +1,490 @@
+---
+import PostCard from '../components/blog/PostCard.astro';
+import ProjectCard from '../components/projects/ProjectCard.astro';
+import SectionHead from '../components/ui/SectionHead.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getHomePage, getSeo, getSiteConfig } from '../lib/config';
+import { getPosts } from '../lib/posts';
+import { getFeaturedProjects } from '../lib/projects';
+
+const site = getSiteConfig();
+const seo = getSeo();
+const home = getHomePage();
+const projects = await getFeaturedProjects(3);
+const posts = (await getPosts()).slice(0, 2);
+
+const sections = [...home.sections]
+  .filter((section) => section.visible)
+  .sort((a, b) => a.order - b.order);
+const section = (id: string) => sections.find((item) => item.id === id);
+
+const [before, after] = home.hero.headline.split(home.hero.highlight);
+const consoleLines = home.hero.console.lines;
+const title = seo.pages['/']?.title ?? `${site.name} — ${site.role}`;
+const description = seo.pages['/']?.description ?? seo.default.description;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="hero">
+    <div class="shell hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">{home.hero.eyebrow}</p>
+
+        <h1 class="display reveal">
+          {before}<span class="gradient-text">{home.hero.highlight}</span>{after}
+        </h1>
+
+        <p class="lede hero-lede">{home.hero.subtext}</p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href={home.hero.primary_cta.href}>
+            {home.hero.primary_cta.label}
+            <span aria-hidden="true">→</span>
+          </a>
+          <a class="btn btn-ghost" href={home.hero.secondary_cta.href}>{home.hero.secondary_cta.label}</a>
+        </div>
+
+        {site.availability !== 'hidden' && (
+          <p class="status-line">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span>{home.hero.status_note}</span>
+          </p>
+        )}
+      </div>
+
+      <div class="console glass" aria-hidden="true">
+        <div class="console-bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="console-title mono">{home.hero.console.title}</span>
+        </div>
+        <div class="console-body mono">
+          <p class="cmd"><span class="prompt">~</span> <span class="dollar">$</span> {home.hero.console.command}</p>
+          {consoleLines.map((line) => (
+            <p class="line"><span class="arrow">→</span> {line}</p>
+          ))}
+          <p class="cmd"><span class="prompt">~</span> <span class="dollar">$</span> <span class="cursor"></span></p>
+        </div>
+        <div class="console-foot mono">
+          <span class="foot-dot" aria-hidden="true"></span>
+          <span>3 case studies · 1 live demo · 0 servers</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="shell">
+      <dl class="stats">
+        {home.stats.map((stat) => (
+          <div class="stat">
+            <dt class="stat-value num">{stat.value}</dt>
+            <dd>
+              <span class="stat-label">{stat.label}</span>
+              <span class="stat-note">{stat.note}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  {
+    section('work') && (
+      <section class="section">
+        <div class="shell">
+          <SectionHead index={section('work')!.index} title={section('work')!.title} note={section('work')!.note} />
+          <div class="work-grid">
+            {projects.map((project, index) => (
+              <div class:list={['work-item', { lead: index === 0 }]}>
+                <ProjectCard project={project} index={String(index + 1).padStart(2, '0')} featured={index === 0} />
+              </div>
+            ))}
+          </div>
+          <div class="section-foot">
+            <a class="arrow-link" href="/projects">All projects, with the measurements</a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    section('capabilities') && (
+      <section class="section">
+        <div class="shell">
+          <SectionHead
+            index={section('capabilities')!.index}
+            title={section('capabilities')!.title}
+            note={section('capabilities')!.note}
+          />
+          <div class="cap-grid">
+            {home.capabilities.map((capability, index) => (
+              <article class="cap">
+                <span class="cap-index mono">{String(index + 1).padStart(2, '0')}</span>
+                <h3>{capability.title}</h3>
+                <p>{capability.summary}</p>
+                <ul class="cap-items">
+                  {capability.items.map((item) => <li class="tag">{item}</li>)}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    section('writing') && (
+      <section class="section">
+        <div class="shell">
+          <SectionHead index={section('writing')!.index} title={section('writing')!.title} note={section('writing')!.note} />
+          <div class="posts">
+            {posts.map((post) => <PostCard post={post} />)}
+          </div>
+          <div class="section-foot">
+            <a class="arrow-link" href="/blog">Everything I have published</a>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    section('cta') && (
+      <section class="section">
+        <div class="shell">
+          <div class="cta-band glass">
+            <div>
+              <h2>{home.cta.title}</h2>
+              <p>{home.cta.body}</p>
+            </div>
+            <div class="cta-actions">
+              <a class="btn btn-primary" href={home.cta.primary.href}>{home.cta.primary.label}</a>
+              <a class="btn btn-ghost" href={home.cta.secondary.href}>{home.cta.secondary.label}</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-top: clamp(2.5rem, 6vw, 5rem);
+    padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .hero-grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: center;
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  /* Grid children default to min-width:auto, which lets a nowrap child (the
+     console) push the whole page wider than the viewport. */
+  .hero-grid > * {
+    min-width: 0;
+  }
+
+  .hero-copy {
+    display: grid;
+    gap: var(--space-sm);
+    align-content: start;
+  }
+
+  .display {
+    font-size: var(--step-3);
+    max-width: 20ch;
+  }
+
+  .hero-lede {
+    max-width: 46ch;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.6rem;
+  }
+
+  .status-line {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    margin-top: 0.4rem;
+    border-radius: 50%;
+    background: var(--success);
+    animation: pulse-dot 2.6s ease-in-out infinite;
+    flex: none;
+  }
+
+  /* ── Console card ───────────────────────────────────────────────────────── */
+  .console {
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    font-size: 0.78rem;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .console-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.65rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in oklab, var(--surface-elevated) 60%, transparent);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: color-mix(in oklab, var(--muted) 45%, transparent);
+  }
+
+  .console-title {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+  }
+
+  .console-body {
+    padding: 1rem 1.1rem 1.3rem;
+    display: grid;
+    gap: 0.4rem;
+    color: color-mix(in oklab, var(--text) 82%, var(--muted));
+    overflow-x: auto;
+  }
+
+  .cmd {
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .prompt {
+    color: var(--gradient-b);
+  }
+
+  .dollar {
+    color: var(--accent);
+  }
+
+  .line {
+    padding-left: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .arrow {
+    color: var(--accent);
+    margin-right: 0.35rem;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 7px;
+    height: 0.95em;
+    vertical-align: -0.12em;
+    background: var(--accent);
+    animation: blink 1.1s steps(2, start) infinite;
+  }
+
+  .console-foot {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.66rem;
+    letter-spacing: 0.04em;
+    background: color-mix(in oklab, var(--surface-elevated) 40%, transparent);
+  }
+
+  .foot-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+  }
+
+  @keyframes blink {
+    to {
+      visibility: hidden;
+    }
+  }
+
+  /* ── Stats ──────────────────────────────────────────────────────────────── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md) var(--space-sm);
+    margin: 0;
+    padding-block: var(--space-md);
+    border-block: 1px solid var(--border);
+  }
+
+  .stat {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .stat-value {
+    font-size: var(--step-2);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    background: linear-gradient(120deg, var(--text), color-mix(in oklab, var(--text) 55%, var(--accent)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .stat dd {
+    margin: 0;
+    display: grid;
+    gap: 0.05rem;
+  }
+
+  .stat-label {
+    font-size: 0.82rem;
+    color: var(--text);
+  }
+
+  .stat-note {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+
+  /* ── Work grid ──────────────────────────────────────────────────────────── */
+  .work-grid {
+    display: grid;
+    gap: var(--space-sm);
+    grid-template-columns: 1fr;
+  }
+
+  .work-item {
+    min-width: 0;
+  }
+
+  .section-foot {
+    margin-top: var(--space-md);
+  }
+
+  /* ── Capabilities ───────────────────────────────────────────────────────── */
+  .cap-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .cap {
+    display: grid;
+    gap: 0.5rem;
+    padding: var(--space-md) 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cap-index {
+    color: var(--accent);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+  }
+
+  .cap h3 {
+    font-size: var(--step-0);
+    letter-spacing: -0.01em;
+  }
+
+  .cap p {
+    color: var(--muted);
+    font-size: 0.86rem;
+    line-height: 1.6;
+    max-width: 40ch;
+  }
+
+  .cap-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    list-style: none;
+    margin: 0.2rem 0 0;
+    padding: 0;
+  }
+
+  /* ── CTA band ───────────────────────────────────────────────────────────── */
+  .cta-band {
+    display: grid;
+    gap: var(--space-md);
+    padding: clamp(1.4rem, 4vw, 2.6rem);
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(40rem 20rem at 100% 0%, color-mix(in oklab, var(--accent) 16%, transparent), transparent 70%),
+      var(--glass);
+  }
+
+  .cta-band h2 {
+    font-size: var(--step-2);
+    max-width: 24ch;
+  }
+
+  .cta-band p {
+    margin-top: 0.6rem;
+    color: var(--muted);
+    max-width: 56ch;
+  }
+
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  @media (min-width: 640px) {
+    .stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .cap-grid {
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: var(--space-lg);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .hero-grid {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: var(--space-2xl);
+    }
+    .work-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .work-item.lead {
+      grid-column: span 2;
+    }
+    .cap-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .cta-band {
+      grid-template-columns: 1.4fr 0.8fr;
+      align-items: center;
+    }
+    .cta-actions {
+      justify-content: flex-end;
+    }
+  }
+</style>

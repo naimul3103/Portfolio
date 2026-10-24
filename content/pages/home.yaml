@@ -1,0 +1,95 @@
+# Every visible string on the home page comes from this file.
+hero:
+  eyebrow: AI/ML engineer · Bangladesh
+  headline: I build models, then the APIs that make them useful.
+  highlight: make them useful
+  subtext: >-
+    Fresh computer science graduate. I care about the part after the notebook —
+    the schema, the error path, the measurement that proves the thing works.
+  primary_cta:
+    label: See the work
+    href: /projects
+  secondary_cta:
+    label: Read the writing
+    href: /blog
+  status_note: Open to internships and junior AI/ML roles, remote or Dhaka.
+  console:
+    title: focus.md
+    command: cat focus.md
+    lines:
+      - "shipping: FastAPI services with real validation"
+      - "evaluating: models by precision@k, not vibes"
+      - "learning: retrieval, evaluation, system design"
+      - "status: open to the first role"
+
+stats:
+  - value: "30k"
+    label: rows modelled
+    note: content-refresh ranking
+  - value: "10"
+    label: REST endpoints
+    note: designed and documented
+  - value: "6"
+    label: public projects
+    note: shipped, not tutorial clones
+  - value: "0"
+    label: servers to keep alive
+    note: static-first by design
+
+sections:
+  - id: work
+    visible: true
+    order: 10
+    index: "01"
+    title: Selected work
+    note: Three projects, with the measurement attached.
+  - id: capabilities
+    visible: true
+    order: 20
+    index: "02"
+    title: What I actually use
+    note: Tools I have shipped with — not a logo wall.
+  - id: writing
+    visible: true
+    order: 30
+    index: "03"
+    title: Recent writing
+    note: Decisions, not announcements.
+  - id: cta
+    visible: true
+    order: 40
+    index: "04"
+    title: The next step
+
+capabilities:
+  - title: Machine learning
+    summary: Framing a problem, choosing a baseline, and reporting the number that matters.
+    items: [Python, scikit-learn, pandas, NumPy, model evaluation, feature analysis]
+  - title: Backend engineering
+    summary: APIs that reject bad input at the boundary and stay readable six months later.
+    items: [FastAPI, Pydantic v2, REST, Uvicorn, SQL, dependency injection]
+  - title: Data work
+    summary: Getting from a messy CSV to a table someone can defend.
+    items: [pandas, NumPy, Matplotlib, Plotly, Seaborn, exploratory analysis]
+  - title: Languages & foundations
+    summary: The coursework that makes the rest less mysterious.
+    items: [Python, C, C++, Java, JavaScript, data structures, algorithms]
+  - title: Web & delivery
+    summary: Enough front-end to ship the thing, enough tooling to keep it honest.
+    items: [HTML, CSS, JavaScript, Astro, Git, GitHub Actions, Linux]
+  - title: Working practice
+    summary: How the work gets finished.
+    items: [technical writing, code review, documentation, debugging, scoping]
+
+cta:
+  title: I am looking for the first role.
+  body: >-
+    Internship or junior position in AI/ML engineering or Python backend.
+    Remote, or based in Dhaka. If the team cares about evidence over adjectives,
+    we will get along.
+  primary:
+    label: Email me
+    href: mailto:naim.islam8761@gmail.com
+  secondary:
+    label: Read the résumé
+    href: /resume
