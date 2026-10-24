@@ -107,6 +107,13 @@ const initials = site.name
     box-shadow: var(--shadow-sm);
   }
 
+  /* The light gradient is darker, so near-white monogram text would disappear.
+     A solid accent chip keeps the mark legible in both palettes. */
+  :global([data-theme='light']) .monogram {
+    background: var(--accent);
+    color: white;
+  }
+
   .brand-text {
     display: grid;
     line-height: 1.15;
