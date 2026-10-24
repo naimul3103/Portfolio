@@ -1,0 +1,51 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# theme.yaml — the single source of truth for every colour, radius and motion
+# value on the site. `npm run tokens` compiles this into src/styles/tokens.css.
+# Nothing in src/ may hard-code a hex value (CI gate: scripts/check-no-hex.mjs).
+#
+# Contrast pairs are gated at 4.5:1 by scripts/check-contrast.mjs on every PR.
+# ─────────────────────────────────────────────────────────────────────────────
+name: Electric Indigo
+type_scale: editorial # compact | modular | editorial
+spacing: 4 # base unit in px (4 or 8)
+motion: subtle # none | subtle | full
+dark_mode: true
+
+fonts:
+  sans: Inter Variable
+  mono: JetBrains Mono Variable
+
+dark:
+  background: "#0A0A0F"
+  surface: "#12121A"
+  elevated: "#1A1A2E"
+  text: "#E8E8ED"
+  muted: "#8888A0"
+  accent: "#7C74FF" # link/interactive tint; #6C63FF fails 4.5:1 on --surface (4.32:1)
+  accent_gradient: ["#6C63FF", "#00D4AA"]
+  border: "#26263A"
+  success: "#00D4AA"
+  warning: "#FFB84D"
+  danger: "#FF6B6B"
+
+light:
+  background: "#FAFBFC"
+  surface: "#FFFFFF"
+  elevated: "#F0F2F5"
+  text: "#1A1A2E"
+  muted: "#5A5A7A"
+  accent: "#4F46E5"
+  accent_gradient: ["#4F46E5", "#00806A"]
+  border: "#DDE1E7"
+  success: "#007A63"
+  warning: "#8A5A00"
+  danger: "#B4232A"
+
+radii:
+  element: 6
+  card: 16
+  pill: 9999
+
+layout:
+  max: 1200
+  content: 720

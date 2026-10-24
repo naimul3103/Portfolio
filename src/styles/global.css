@@ -1,0 +1,643 @@
+@import "./tokens.css";
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Design language: "intelligent minimalism with purposeful depth".
+   Surface stays quiet; depth arrives on interaction. Every colour comes from
+   tokens.css, every size from the fluid scale. No literals (CI enforces it).
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-elevated: var(--surface-elevated);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-line: var(--border);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --radius-card: var(--radius-md);
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: var(--step-0);
+    line-height: 1.65;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Ambient depth: two soft light sources + a 64px technical grid. Pure CSS,
+     fixed, and cheap — no image request, no repaint on scroll. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        60rem 40rem at 12% -10%,
+        color-mix(in oklab, var(--accent) 14%, transparent),
+        transparent 60%
+      ),
+      radial-gradient(
+        50rem 36rem at 92% 8%,
+        color-mix(in oklab, var(--gradient-b) 9%, transparent),
+        transparent 62%
+      );
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.35;
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in oklab, var(--text) 4%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--text) 4%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 10%, transparent 78%);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.12;
+    text-wrap: balance;
+    color: var(--text);
+  }
+
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 35%, transparent);
+    color: var(--text);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  /* Inputs are never smaller than 16px — iOS zooms the page otherwise. */
+  input,
+  select,
+  textarea {
+    font-size: max(16px, var(--step-0));
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: var(--space-2xs) var(--space-xs);
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  th {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+}
+
+@layer components {
+  /* ── Layout ─────────────────────────────────────────────────────────────── */
+  .shell {
+    width: 100%;
+    max-width: var(--max-width);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .measure {
+    max-width: 68ch;
+  }
+
+  .section {
+    padding-block: clamp(3rem, 6vw, 6rem);
+    position: relative;
+  }
+
+  /* A page header already supplies the breathing room above the first section. */
+  .page-head + .section {
+    padding-top: var(--space-lg);
+  }
+
+  .section + .section {
+    border-top: 1px solid var(--border);
+  }
+
+  .rule {
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* ── Type helpers ───────────────────────────────────────────────────────── */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 1.75rem;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .display {
+    font-size: var(--step-3);
+    line-height: 1.04;
+    letter-spacing: -0.04em;
+  }
+
+  .lede {
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--muted);
+    max-width: 60ch;
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+  }
+
+  .gradient-text {
+    background: linear-gradient(100deg, var(--gradient-a), var(--gradient-b));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Numbered section header: “01 ── Selected work”. Structure, not decoration. */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .section-head .index {
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
+
+  .section-head h2 {
+    font-size: var(--step-2);
+    letter-spacing: -0.03em;
+  }
+
+  .section-head .note {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: var(--step--1);
+  }
+
+  /* ── Surfaces ───────────────────────────────────────────────────────────── */
+  .glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: clamp(1.1rem, 2.4vw, 1.75rem);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition:
+      transform var(--transition-base),
+      border-color var(--transition-base),
+      box-shadow var(--transition-base);
+    overflow: hidden;
+  }
+
+  /* Gradient hairline that appears on hover — the "purposeful depth" signal. */
+  .card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(120deg, var(--gradient-a), var(--gradient-b));
+    -webkit-mask:
+      linear-gradient(black 0 0) content-box,
+      linear-gradient(black 0 0);
+    mask:
+      linear-gradient(black 0 0) content-box,
+      linear-gradient(black 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    pointer-events: none;
+  }
+
+  .card:hover,
+  .card:focus-within {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .card:hover::after,
+  .card:focus-within::after {
+    opacity: 1;
+  }
+
+  .card-static {
+    transform: none !important;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.22rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    background: color-mix(in oklab, var(--text) 3%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .tag-accent {
+    color: var(--accent);
+    border-color: color-mix(in oklab, var(--accent) 40%, transparent);
+    background: var(--accent-soft);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    background: color-mix(in oklab, var(--text) 4%, transparent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  .badge-dot::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--success) 18%, transparent);
+  }
+
+  /* ── Buttons ────────────────────────────────────────────────────────────── */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    font-size: var(--step--1);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition:
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast),
+      background-color var(--transition-fast),
+      border-color var(--transition-fast),
+      color var(--transition-fast);
+    white-space: nowrap;
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn-primary {
+    background: linear-gradient(100deg, var(--gradient-a), var(--gradient-b));
+    color: var(--bg);
+    box-shadow:
+      0 1px 0 color-mix(in oklab, var(--text) 25%, transparent) inset,
+      var(--shadow-md);
+  }
+
+  .btn-primary:hover {
+    box-shadow:
+      0 1px 0 color-mix(in oklab, var(--text) 30%, transparent) inset,
+      var(--shadow-glow);
+  }
+
+  .btn-ghost {
+    border-color: var(--border);
+    background: color-mix(in oklab, var(--text) 3%, transparent);
+    color: var(--text);
+  }
+
+  .btn-ghost:hover {
+    border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+    color: var(--accent);
+  }
+
+  .btn-text {
+    min-height: 44px;
+    padding-inline: 0.25rem;
+    color: var(--accent);
+    gap: 0.35rem;
+  }
+
+  .btn-text::after {
+    content: "→";
+    transition: transform var(--transition-fast);
+  }
+
+  .btn-text:hover::after {
+    transform: translateX(3px);
+  }
+
+  /* ── Links ──────────────────────────────────────────────────────────────── */
+  .link {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    text-decoration-color: color-mix(in oklab, var(--accent) 40%, transparent);
+    transition: text-decoration-color var(--transition-fast);
+  }
+
+  .link:hover {
+    text-decoration-color: var(--accent);
+  }
+
+  .arrow-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--step--1);
+    color: var(--muted);
+    transition:
+      color var(--transition-fast),
+      gap var(--transition-fast);
+  }
+
+  .arrow-link::after {
+    content: "↗";
+    font-size: 0.9em;
+  }
+
+  .arrow-link:hover {
+    color: var(--accent);
+    gap: 0.6rem;
+  }
+
+  /* ── Prose ──────────────────────────────────────────────────────────────── */
+  .prose {
+    max-width: 68ch;
+    font-size: var(--step-0);
+    line-height: 1.75;
+    color: color-mix(in oklab, var(--text) 92%, var(--muted));
+  }
+
+  .prose > * + * {
+    margin-top: 1.15em;
+  }
+
+  .prose h2 {
+    margin-top: 2.6em;
+    font-size: var(--step-1);
+    letter-spacing: -0.02em;
+  }
+
+  .prose h3 {
+    margin-top: 2em;
+    font-size: var(--step-0);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .prose ul,
+  .prose ol {
+    padding-left: 1.3em;
+    display: grid;
+    gap: 0.4em;
+  }
+
+  .prose li::marker {
+    color: var(--accent);
+  }
+
+  .prose blockquote {
+    margin: 1.8em 0;
+    padding-left: 1.1em;
+    border-left: 2px solid var(--accent);
+    color: var(--muted);
+    font-size: var(--step-1);
+    line-height: 1.5;
+  }
+
+  .prose a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+    text-decoration-color: color-mix(in oklab, var(--accent) 40%, transparent);
+  }
+
+  .prose code:not(pre code) {
+    padding: 0.15em 0.4em;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    font-size: 0.85em;
+  }
+
+  .prose pre {
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface) !important;
+    overflow-x: auto;
+    font-size: 0.86rem;
+    line-height: 1.6;
+  }
+
+  .prose img {
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+
+  .prose hr {
+    margin: 2.5em 0;
+  }
+
+  .prose table {
+    font-size: var(--step--1);
+  }
+
+  /* ── Motion: scroll-driven where supported, otherwise nothing. ──────────── */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .reveal {
+        animation: reveal-up linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 22%;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  .skip-link {
+    position: absolute;
+    left: var(--space-sm);
+    top: -100%;
+    z-index: 200;
+    padding: 0.7rem 1rem;
+    border-radius: var(--radius-sm);
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 600;
+  }
+
+  .skip-link:focus {
+    top: var(--space-sm);
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--success) 55%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in oklab, var(--success) 0%, transparent);
+  }
+}
