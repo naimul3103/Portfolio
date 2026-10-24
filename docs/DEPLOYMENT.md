@@ -25,7 +25,7 @@
    | `PUBLIC_SITE_URL` | `https://naimul3103.pages.dev` | both                   |
    | `NODE_VERSION`    | `22`                           | both (belt and braces) |
 
-5. Deploy. The first build produces ~63 pages, including the Pagefind index.
+5. Deploy. The first build produces 41 routes, including the Pagefind index.
 
 > `PUBLIC_SITE_URL` is not a secret. It is the origin used for canonical URLs,
 > OG tags, the sitemap and RSS. Setting it in Pages (rather than hard-coding it)

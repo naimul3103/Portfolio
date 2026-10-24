@@ -31,7 +31,8 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !page.includes('/admin') && !page.includes('/search'),
+      filter: (page) =>
+        !page.includes('/admin') && !page.includes('/search') && !page.includes('/blog/tag/'),
       changefreq: 'weekly',
       lastmod: new Date(),
     }),
