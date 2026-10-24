@@ -30,8 +30,9 @@ content/*.yaml ──────▶ src/lib/config.ts ──zod──▶ typed 
 ```
 
 Nothing renders per request. `/rss.xml` and `/sitemap-index.xml` are also
-build-time artifacts. The only server-side code in the repo is the Worker in
-`worker/site-api`, which is not part of the page render path.
+build-time artifacts. There is no server-side code in the repository today: the
+contact form falls back to `mailto:`, and the planned `worker/site-api` (Phase 6)
+will sit beside the static site, not inside its render path.
 
 ### Why not SSR
 

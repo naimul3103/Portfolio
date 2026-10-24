@@ -22,7 +22,7 @@
 | ------------- | ----------------------------------------------------------------- | ------------------------------------- |
 | CMS login     | OAuth worker deploy + callback URL                                | `docs/CMS.md` §3                      |
 | Media uploads | R2 bucket, token, CORS                                            | `docs/CMS.md` §4                      |
-| Contact form  | Worker deploy + Turnstile + Resend keys                           | `worker/site-api` (Phase 6)           |
+| Contact form  | Worker scaffold + deploy + Turnstile + Resend keys                | `worker/site-api` (to be created, Phase 6) |
 | AI assistant  | Worker deploy + Groq key; flip `chat: true` and `chatbot.enabled` | `docs/ARCHITECTURE.md`                |
 | Comments      | public repo + Discussions category + giscus app                   | `site-config.yaml` → `flags.comments` |
 | Analytics     | Cloudflare Web Analytics token                                    | `BaseLayout.astro`                    |
