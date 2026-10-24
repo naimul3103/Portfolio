@@ -1,0 +1,150 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getBlogPage, getSeo, getSiteConfig } from '../../lib/config';
+import { formatDate, isoDate, readingTime } from '../../lib/format';
+import { getNotes, type Note } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  return notes.map((note) => ({ params: { slug: note.id }, props: { note } }));
+}
+
+interface Props {
+  note: Note;
+}
+
+const { note } = Astro.props as Props;
+const site = getSiteConfig();
+const seo = getSeo();
+const labels = getBlogPage();
+const { Content } = await render(note);
+const all = await getNotes();
+const index = all.findIndex((item) => item.id === note.id);
+const older = all[index + 1];
+const newer = all[index - 1];
+
+const title = `${note.data.title} — ${site.name}`;
+const description = note.data.description;
+const statusLabel: Record<string, string> = {
+  seedling: 'Seedling',
+  growing: 'Growing',
+  evergreen: 'Evergreen',
+};
+---
+
+<BaseLayout title={title} description={description} type="article">
+  <article>
+    <header class="note-head">
+      <div class="shell">
+        <nav class="crumbs mono" aria-label="Breadcrumb">
+          <a href="/notes">Notes</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{statusLabel[note.data.status]}</span>
+        </nav>
+        <h1 class="display">{note.data.title}</h1>
+        <div class="note-meta">
+          <time datetime={isoDate(note.data.pubDate)}>{formatDate(note.data.pubDate)}</time>
+          <span aria-hidden="true">·</span>
+          <span>{readingTime(note.body ?? '')} {labels.labels.read_time}</span>
+          <span aria-hidden="true">·</span>
+          <span class:list={['badge', `n-${note.data.status}`]}>{statusLabel[note.data.status]}</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="shell note-layout">
+      <div class="prose">
+        <Content />
+      </div>
+      <aside class="note-side">
+        <h2 class="side-title">Tags</h2>
+        <ul class="tags">
+          {note.data.tags.map((tag) => <li class="tag">#{tag}</li>)}
+        </ul>
+        <div class="neighbours">
+          {newer && <a class="arrow-link" href={`/notes/${newer.id}`}>Newer: {newer.data.title}</a>}
+          {older && <a class="arrow-link" href={`/notes/${older.id}`}>Older: {older.data.title}</a>}
+        </div>
+      </aside>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .note-head {
+    padding-top: clamp(2rem, 5vw, 3.5rem);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .crumbs {
+    display: flex;
+    gap: 0.45rem;
+    color: var(--muted);
+    font-size: 0.72rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .crumbs a:hover { color: var(--accent); }
+
+  .note-head h1 { max-width: 26ch; }
+
+  .note-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .n-seedling { color: var(--warning); }
+  .n-growing { color: var(--accent); }
+  .n-evergreen { color: var(--success); }
+
+  .note-layout {
+    display: grid;
+    gap: var(--space-xl);
+    padding-top: var(--space-lg);
+    align-items: start;
+  }
+
+  .note-side {
+    display: grid;
+    gap: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--border);
+  }
+
+  .side-title {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .neighbours {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: var(--space-sm);
+  }
+
+  @media (min-width: 960px) {
+    .note-layout {
+      grid-template-columns: minmax(0, 1fr) 17rem;
+    }
+  }
+</style>

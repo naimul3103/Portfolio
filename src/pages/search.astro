@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getSeo, getSiteConfig } from '../lib/config';
+
+const site = getSiteConfig();
+const seo = getSeo();
+const title = `Search — ${site.name}`;
+const description = seo.default.description;
+---
+
+<BaseLayout title={title} description={description} noindex>
+  <section class="page-head">
+    <div class="shell">
+      <p class="eyebrow">Search</p>
+      <h1 class="display reveal">Find the thing you came for.</h1>
+      <p class="lede">
+        The index is built from the published HTML at deploy time — projects,
+        posts, notes, résumé. It runs in your browser; no query leaves the page.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div id="search" class="search-root" data-search>
+        <p class="fallback">
+          Search needs the production build. In local development the index does
+          not exist yet — run <code>npm run build</code> and preview the result.
+        </p>
+      </div>
+      <noscript>
+        <p class="fallback">
+          Search requires JavaScript. The <a class="link" href="/sitemap-index.xml">sitemap</a>
+          lists every page if you would rather browse.
+        </p>
+      </noscript>
+      <script is:inline src="/search.js" defer></script>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+    padding-bottom: var(--space-md);
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .page-head h1 { max-width: 22ch; }
+
+  .search-root {
+    min-height: 12rem;
+  }
+
+  .fallback {
+    padding: var(--space-md);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+</style>

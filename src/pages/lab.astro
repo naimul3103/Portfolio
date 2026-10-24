@@ -1,0 +1,225 @@
+---
+import SectionHead from '../components/ui/SectionHead.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getLabPage, getSeo, getSiteConfig } from '../lib/config';
+
+const site = getSiteConfig();
+const seo = getSeo();
+const page = getLabPage();
+
+const title = seo.pages['/lab']?.title ?? `Lab — ${site.name}`;
+const description = seo.pages['/lab']?.description ?? seo.default.description;
+const statusLabel: Record<string, string> = {
+  shipped: 'Shipped',
+  'in-development': 'In development',
+  planned: 'Planned',
+};
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="page-head">
+    <div class="shell">
+      <p class="eyebrow">{page.eyebrow}</p>
+      <h1 class="display reveal">{page.title}</h1>
+      <p class="lede">{page.intro}</p>
+      <p class="notice mono">{page.notice}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <SectionHead index="01" title="The experiments" note="Model, data, failure mode" />
+      <div class="demos">
+        {page.demos.map((demo) => (
+          <article class="demo">
+            <header class="demo-head">
+              <h3>{demo.title}</h3>
+              <span class:list={['badge', `d-${demo.status}`]}>{statusLabel[demo.status]}</span>
+            </header>
+            <p class="demo-desc">{demo.description}</p>
+            <dl class="spec">
+              <div><dt>Model</dt><dd>{demo.model}</dd></div>
+              <div><dt>Data</dt><dd>{demo.data}</dd></div>
+              <div><dt>Limits</dt><dd>{demo.limits}</dd></div>
+            </dl>
+            <ul class="stack" aria-label="Stack">
+              {demo.stack.map((item) => <li class="tag">{item}</li>)}
+            </ul>
+            <a class="arrow-link" href={demo.source}>Source / case study</a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <SectionHead index="02" title="How the assistant will work" note="Designed, not deployed" />
+      <div class="pipeline">
+        <div class="step">
+          <span class="step-index mono">01</span>
+          <h3>Ask</h3>
+          <p>A question typed on the site, with a Turnstile challenge and a per-address daily cap.</p>
+        </div>
+        <div class="step">
+          <span class="step-index mono">02</span>
+          <h3>Retrieve</h3>
+          <p>The Worker reads a knowledge base built from these pages at deploy time — projects, notes, résumé. Nothing else.</p>
+        </div>
+        <div class="step">
+          <span class="step-index mono">03</span>
+          <h3>Answer, or refuse</h3>
+          <p>A model answers only from that context, links its sources, and falls back to email when the provider is down.</p>
+        </div>
+      </div>
+      <p class="pipeline-note">
+        The constraint is deliberate: an assistant that can only quote this site
+        cannot invent a job history. Prompt-injection tests are part of the build
+        before the endpoint is enabled.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+    padding-bottom: var(--space-md);
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .page-head h1 { max-width: 24ch; }
+
+  .notice {
+    margin-top: var(--space-xs);
+    padding: 0.7rem 0.9rem;
+    border-left: 2px solid var(--warning);
+    background: color-mix(in oklab, var(--warning) 7%, transparent);
+    color: var(--muted);
+    font-size: 0.76rem;
+    line-height: 1.6;
+    max-width: 72ch;
+  }
+
+  .demos {
+    display: grid;
+    gap: var(--space-sm);
+    grid-template-columns: 1fr;
+  }
+
+  .demo {
+    display: grid;
+    gap: var(--space-xs);
+    padding: var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: color-mix(in oklab, var(--surface) 65%, transparent);
+  }
+
+  .demo-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs);
+  }
+
+  .demo-head h3 {
+    font-size: var(--step-1);
+    letter-spacing: -0.02em;
+  }
+
+  .d-shipped { color: var(--success); }
+  .d-in-development { color: var(--warning); }
+  .d-planned { color: var(--muted); }
+
+  .demo-desc {
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+
+  .spec {
+    display: grid;
+    gap: 0.45rem;
+    margin: var(--space-xs) 0;
+    padding-top: var(--space-xs);
+    border-top: 1px solid var(--border);
+  }
+
+  .spec div {
+    display: grid;
+    grid-template-columns: 4.5rem 1fr;
+    gap: 0.6rem;
+    align-items: baseline;
+  }
+
+  .spec dt {
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .spec dd {
+    margin: 0;
+    font-size: 0.82rem;
+    color: color-mix(in oklab, var(--text) 85%, var(--muted));
+    line-height: 1.5;
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pipeline {
+    display: grid;
+    gap: var(--space-sm);
+    grid-template-columns: 1fr;
+  }
+
+  .step {
+    position: relative;
+    padding: var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+  }
+
+  .step-index {
+    color: var(--accent);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+  }
+
+  .step h3 {
+    font-size: var(--step-0);
+  }
+
+  .step p {
+    color: var(--muted);
+    font-size: 0.84rem;
+    line-height: 1.6;
+  }
+
+  .pipeline-note {
+    margin-top: var(--space-sm);
+    color: var(--muted);
+    font-size: 0.82rem;
+    max-width: 66ch;
+    line-height: 1.65;
+  }
+
+  @media (min-width: 780px) {
+    .demos { grid-template-columns: repeat(3, 1fr); }
+    .pipeline { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>

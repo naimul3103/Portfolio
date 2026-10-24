@@ -1,0 +1,254 @@
+---
+import { getCollection, render } from 'astro:content';
+import PostCard from '../../components/blog/PostCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getBlogPage, getSeo, getSiteConfig } from '../../lib/config';
+import { formatDate, isoDate, readingTime } from '../../lib/format';
+import { getRelatedPosts, type Post } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props as Props;
+const site = getSiteConfig();
+const seo = getSeo();
+const page = getBlogPage();
+const labels = page.labels;
+const { Content, headings } = await render(post);
+const related = await getRelatedPosts(post, 2);
+
+const title = `${post.data.title} — ${site.name}`;
+const description = post.data.description;
+const canonical = new URL(`/blog/${post.id}`, Astro.site ?? Astro.url).href;
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+
+const jsonLd = {
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description,
+  datePublished: post.data.pubDate.toISOString(),
+  dateModified: (post.data.updated ?? post.data.pubDate).toISOString(),
+  url: canonical,
+  mainEntityOfPage: canonical,
+  author: { '@id': new URL('/#person', Astro.site ?? Astro.url).href },
+  publisher: { '@id': new URL('/#person', Astro.site ?? Astro.url).href },
+  keywords: post.data.tags.join(', '),
+  articleSection: page.categories[post.data.category] ?? post.data.category,
+  inLanguage: 'en',
+};
+---
+
+<BaseLayout title={title} description={description} type="article" jsonLd={[jsonLd]}>
+  <article>
+    <header class="post-head">
+      <div class="shell">
+        <nav class="crumbs mono" aria-label="Breadcrumb">
+          <a href="/blog">Writing</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{page.categories[post.data.category]}</span>
+        </nav>
+
+        <h1 class="display">{post.data.title}</h1>
+        <p class="lede">{post.data.description}</p>
+
+        <div class="post-meta">
+          <time datetime={isoDate(post.data.pubDate)}>{formatDate(post.data.pubDate)}</time>
+          <span aria-hidden="true">·</span>
+          <span>{readingTime(post.body ?? '')} {labels.read_time}</span>
+          {post.data.updated && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{labels.updated} {formatDate(post.data.updated)}</span>
+            </>
+          )}
+          {post.data.aiGenerated && <span class="tag tag-accent">{labels.ai_generated}</span>}
+        </div>
+      </div>
+    </header>
+
+    <div class="shell post-layout">
+      <div class="prose post-body">
+        {post.data.aiGenerated && <p class="ai-note">{labels.ai_disclosure}</p>}
+        <Content />
+      </div>
+
+      <aside class="post-side">
+        {toc.length > 1 && (
+          <nav class="toc" aria-label={labels.toc}>
+            <h2 class="side-title">{labels.toc}</h2>
+            <ol>
+              {toc.map((heading) => (
+                <li class:list={[`depth-${heading.depth}`]}>
+                  <a href={`#${heading.slug}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )}
+
+        <div class="side-block">
+          <h2 class="side-title">Tags</h2>
+          <ul class="tags">
+            {post.data.tags.map((tag) => <li class="tag">#{tag}</li>)}
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    {related.length > 0 && (
+      <section class="section related">
+        <div class="shell">
+          <h2 class="related-title">{labels.related}</h2>
+          <div class="related-list">
+            {related.map((item) => <PostCard post={item} compact />)}
+          </div>
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .post-head {
+    padding-top: clamp(2rem, 5vw, 4rem);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .crumbs {
+    display: flex;
+    gap: 0.45rem;
+    color: var(--muted);
+    font-size: 0.72rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .crumbs a:hover {
+    color: var(--accent);
+  }
+
+  .post-head h1 {
+    max-width: 26ch;
+  }
+
+  .post-head .lede {
+    margin-top: var(--space-xs);
+    color: var(--muted);
+  }
+
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+
+  .post-layout {
+    display: grid;
+    gap: var(--space-xl);
+    padding-top: var(--space-lg);
+    align-items: start;
+  }
+
+  .post-body {
+    min-width: 0;
+  }
+
+  .ai-note {
+    padding: 0.7rem 0.9rem;
+    border-left: 2px solid var(--accent);
+    background: color-mix(in oklab, var(--accent) 7%, transparent);
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  .post-side {
+    display: grid;
+    gap: var(--space-lg);
+    align-content: start;
+  }
+
+  .side-block,
+  .toc {
+    display: grid;
+    gap: 0.5rem;
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--border);
+  }
+
+  .side-title {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .toc a {
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .toc a:hover {
+    color: var(--accent);
+  }
+
+  .toc .depth-3 {
+    padding-left: 0.8rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .related {
+    border-top: 1px solid var(--border);
+  }
+
+  .related-title {
+    font-size: var(--step-1);
+    margin-bottom: var(--space-sm);
+  }
+
+  .related-list {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  @media (min-width: 960px) {
+    .post-layout {
+      grid-template-columns: minmax(0, 1fr) 15rem;
+      gap: var(--space-2xl);
+    }
+    .post-side {
+      position: sticky;
+      top: 6rem;
+    }
+  }
+</style>

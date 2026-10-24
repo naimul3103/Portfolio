@@ -1,0 +1,188 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getBlogPage, getSeo, getSiteConfig } from '../../lib/config';
+import { formatDate, readingTime } from '../../lib/format';
+import { getNotes } from '../../lib/posts';
+
+const site = getSiteConfig();
+const seo = getSeo();
+const labels = getBlogPage();
+const notes = await getNotes();
+
+const title = seo.pages['/notes']?.title ?? `Notes — ${site.name}`;
+const description = seo.pages['/notes']?.description ?? seo.default.description;
+const statusLabel: Record<string, string> = {
+  seedling: 'Seedling',
+  growing: 'Growing',
+  evergreen: 'Evergreen',
+};
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="page-head">
+    <div class="shell">
+      <p class="eyebrow">Notes</p>
+      <h1 class="display reveal">The working notebook.</h1>
+      <p class="lede">
+        Short, dated observations. A note is allowed to be wrong next month —
+        that is what the date is for.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      {notes.length === 0 ? (
+        <div class="empty glass">
+          <h2>No notes yet</h2>
+          <p>The notebook opens when there is something worth writing down.</p>
+        </div>
+      ) : (
+        <ol class="note-list">
+          {notes.map((note) => (
+            <li class="note">
+              <div class="note-meta">
+                <time class="mono" datetime={note.data.pubDate.toISOString()}>{formatDate(note.data.pubDate)}</time>
+                <span class:list={['status-dot', `s-${note.data.status}`]} aria-hidden="true"></span>
+                <span class="mono status">{statusLabel[note.data.status]}</span>
+              </div>
+              <div class="note-body">
+                <h2><a href={`/notes/${note.id}`}>{note.data.title}</a></h2>
+                <p>{note.data.description}</p>
+                <div class="note-foot">
+                  <ul class="tags">
+                    {note.data.tags.map((tag) => <li class="tag">#{tag}</li>)}
+                  </ul>
+                  <span class="mono read">{readingTime(note.body ?? '')} {labels.labels.read_time}</span>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ol>
+      )}
+
+      <p class="back"><a class="arrow-link" href="/blog">Longer writing lives here</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+    padding-bottom: var(--space-lg);
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .note-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+  }
+
+  .note {
+    display: grid;
+    gap: 0.6rem;
+    padding-block: var(--space-md);
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+
+  .note:first-child {
+    border-top: 0;
+  }
+
+  .note-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    margin-left: 0.3rem;
+  }
+
+  .s-seedling { background: var(--warning); }
+  .s-growing { background: var(--accent); }
+  .s-evergreen { background: var(--success); }
+
+  .status {
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+  }
+
+  .note-body {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .note h2 {
+    font-size: var(--step-1);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+
+  .note h2 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .note p {
+    color: var(--muted);
+    font-size: var(--step--1);
+    max-width: 68ch;
+    line-height: 1.6;
+  }
+
+  .note-foot {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    margin-top: 0.2rem;
+  }
+
+  .tags {
+    display: flex;
+    gap: 0.3rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+
+  .read {
+    color: color-mix(in oklab, var(--muted) 70%, transparent);
+    font-size: 0.68rem;
+  }
+
+  .note:hover h2 {
+    color: var(--accent);
+  }
+
+  h2 { transition: color var(--transition-fast); }
+
+  .back { margin-top: var(--space-lg); }
+
+  @media (min-width: 760px) {
+    .note {
+      grid-template-columns: 10rem 1fr;
+      gap: var(--space-md);
+    }
+    .note-meta {
+      align-items: flex-start;
+      padding-top: 0.35rem;
+      flex-wrap: wrap;
+    }
+  }
+</style>

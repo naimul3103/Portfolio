@@ -1,0 +1,226 @@
+---
+import ProjectCard from '../../components/projects/ProjectCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getProjectsPage, getSeo, getSiteConfig } from '../../lib/config';
+import { getSyncStamp, getVisibleRepoViews } from '../../lib/data';
+import { formatDate } from '../../lib/format';
+import { getProjectStacks, getProjects } from '../../lib/projects';
+
+const site = getSiteConfig();
+const seo = getSeo();
+const page = getProjectsPage();
+const projects = await getProjects();
+const stacks = await getProjectStacks(2);
+const repos = getVisibleRepoViews();
+const syncedAt = getSyncStamp();
+
+const title = seo.pages['/projects']?.title ?? `Work — ${site.name}`;
+const description = seo.pages['/projects']?.description ?? seo.default.description;
+
+const languages = [...new Set(repos.map((repo) => repo.language))].sort();
+const lastPush = repos
+  .map((repo) => new Date(repo.pushedAt))
+  .sort((a, b) => b.getTime() - a.getTime())[0];
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="page-head">
+    <div class="shell">
+      <p class="eyebrow">{page.eyebrow}</p>
+      <h1 class="display reveal">{page.title}</h1>
+      <p class="lede">{page.intro}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="filter-bar" role="navigation" aria-label="Filter projects by stack">
+        <a class="filter active" href="/projects" aria-current="page">{page.filters.all_label}</a>
+        {stacks.map((stack) => (
+          <a class="filter" href={`/projects/stack/${stack.slug}`}>
+            {stack.label}
+            <span class="count num">{stack.count}</span>
+          </a>
+        ))}
+      </div>
+
+      {projects.length === 0 ? (
+        <div class="empty glass">
+          <h2>{page.empty.title}</h2>
+          <p>{page.empty.body}</p>
+          <a class="btn btn-ghost" href="/projects">{page.empty.action_label}</a>
+        </div>
+      ) : (
+        <div class="grid">
+          {projects.map((project, index) => (
+            <ProjectCard project={project} index={String(index + 1).padStart(2, '0')} featured={index < 3} />
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="auto-panel glass">
+        <header class="auto-head">
+          <h2>Project analytics</h2>
+          <span class="mono stamp">Synced from GitHub · {formatDate(new Date(syncedAt))}</span>
+        </header>
+        <dl class="auto-stats">
+          <div><dt>Public repositories</dt><dd class="num">{repos.length}</dd></div>
+          <div><dt>Languages</dt><dd class="num">{languages.length}</dd></div>
+          <div><dt>Case studies</dt><dd class="num">{projects.length}</dd></div>
+          <div><dt>Last push</dt><dd class="num">{lastPush ? formatDate(lastPush) : '—'}</dd></div>
+        </dl>
+        <p class="auto-note">
+          Counts come from a committed snapshot of the GitHub API, not from a live request.
+          The owner layer (<span class="mono">project-overrides.yaml</span>) decides what is shown;
+          automation can never overwrite it.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+    padding-bottom: var(--space-md);
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .page-head h1 {
+    max-width: 22ch;
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding-bottom: var(--space-md);
+    margin-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    font-size: 0.78rem;
+    color: var(--muted);
+    min-height: 36px;
+    transition: color var(--transition-fast), border-color var(--transition-fast), background-color var(--transition-fast);
+  }
+
+  .filter:hover {
+    color: var(--text);
+    border-color: color-mix(in oklab, var(--accent) 45%, var(--border));
+  }
+
+  .filter.active {
+    color: var(--bg);
+    background: var(--text);
+    border-color: var(--text);
+  }
+
+  .count {
+    font-size: 0.65rem;
+    opacity: 0.7;
+  }
+
+  .grid {
+    display: grid;
+    gap: var(--space-sm);
+    grid-template-columns: 1fr;
+  }
+
+  .empty {
+    padding: var(--space-lg);
+    display: grid;
+    gap: var(--space-xs);
+    justify-items: start;
+  }
+
+  .empty h2 {
+    font-size: var(--step-1);
+  }
+
+  .empty p {
+    color: var(--muted);
+  }
+
+  .auto-panel {
+    padding: var(--space-md);
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .auto-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .auto-head h2 {
+    font-size: var(--step-0);
+  }
+
+  .stamp {
+    color: var(--muted);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+  }
+
+  .auto-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+    margin: 0;
+  }
+
+  .auto-stats dt {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .auto-stats dd {
+    margin: 0.15rem 0 0;
+    font-size: var(--step-1);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .auto-note {
+    color: var(--muted);
+    font-size: 0.78rem;
+    line-height: 1.6;
+    max-width: 70ch;
+    padding-top: var(--space-xs);
+    border-top: 1px solid var(--border);
+  }
+
+  @media (min-width: 760px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .auto-stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

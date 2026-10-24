@@ -1,0 +1,72 @@
+---
+import PostCard from '../../../components/blog/PostCard.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getBlogPage, getSeo, getSiteConfig } from '../../../lib/config';
+import { getPostsByTag, getPostTags, type Post } from '../../../lib/posts';
+
+export async function getStaticPaths() {
+  const tags = await getPostTags();
+  return Promise.all(
+    tags.map(async (tag) => ({
+      params: { tag: tag.slug },
+      props: { label: tag.label, posts: await getPostsByTag(tag.slug) },
+    })),
+  );
+}
+
+interface Props {
+  label: string;
+  posts: Post[];
+}
+
+const { label, posts } = Astro.props as Props;
+const site = getSiteConfig();
+const seo = getSeo();
+const page = getBlogPage();
+const title = `#${label} — ${site.name}`;
+const description = `Writing tagged ${label}.`;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="page-head">
+    <div class="shell">
+      <nav class="crumbs mono" aria-label="Breadcrumb">
+        <a href="/blog">{page.eyebrow}</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">#{label}</span>
+      </nav>
+      <h1 class="display">#{label}</h1>
+      <p class="lede">{posts.length} {posts.length === 1 ? 'post' : 'posts'} with this tag.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="post-list">
+        {posts.map((post) => <PostCard post={post} />)}
+      </div>
+      <p class="back"><a class="arrow-link" href="/blog">All writing</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-top: clamp(2.5rem, 6vw, 4rem);
+    padding-bottom: var(--space-lg);
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .crumbs {
+    display: flex;
+    gap: 0.45rem;
+    color: var(--muted);
+    font-size: 0.72rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .crumbs a:hover { color: var(--accent); }
+
+  .back { margin-top: var(--space-md); }
+</style>

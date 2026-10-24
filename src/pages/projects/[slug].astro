@@ -1,0 +1,424 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getProjectsPage, getSeo, getSiteConfig } from '../../lib/config';
+import { formatDate } from '../../lib/format';
+import { getProjectStacks, type Project } from '../../lib/projects';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props as Props;
+const site = getSiteConfig();
+const seo = getSeo();
+const page = getProjectsPage();
+const labels = page.labels;
+const { Content } = await render(project);
+
+const projects = await getCollection('projects');
+const related = projects.filter((entry) => entry.id !== project.id).slice(0, 2);
+const stacks = await getProjectStacks(2);
+
+const title = `${project.data.title} — ${site.name}`;
+const description = project.data.description;
+const canonical = new URL(`/projects/${project.id}`, Astro.site ?? Astro.url).href;
+
+const jsonLd = {
+  '@type': 'CreativeWork',
+  name: project.data.title,
+  description: project.data.description,
+  dateCreated: project.data.pubDate.toISOString(),
+  dateModified: (project.data.updated ?? project.data.pubDate).toISOString(),
+  url: canonical,
+  author: { '@id': new URL('/#person', Astro.site ?? Astro.url).href },
+  keywords: project.data.stack.join(', '),
+};
+---
+
+<BaseLayout title={title} description={description} type="article" jsonLd={[jsonLd]}>
+  <article>
+    <header class="case-head">
+      <div class="shell">
+        <nav class="crumbs mono" aria-label="Breadcrumb">
+          <a href="/projects">Work</a>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{project.data.title}</span>
+        </nav>
+
+        <div class="head-grid">
+          <div class="head-copy">
+            <div class="head-meta">
+              <span class:list={['badge', `status-${project.data.status}`]}>{labels.status[project.data.status]}</span>
+              <span class="mono meta-item">{labels.category[project.data.category]}</span>
+              <span class="mono meta-item">{formatDate(project.data.pubDate)}</span>
+            </div>
+            <h1 class="display">{project.data.title}</h1>
+            <p class="lede">{project.data.description}</p>
+          </div>
+
+          <div class="head-links">
+            {project.data.demoUrl && (
+              <a class="btn btn-primary" href={project.data.demoUrl} rel="noopener">
+                Live demo <span aria-hidden="true">↗</span>
+              </a>
+            )}
+            {project.data.repoUrl && (
+              <a class="btn btn-ghost" href={project.data.repoUrl} rel="noopener">
+                Source <span aria-hidden="true">↗</span>
+              </a>
+            )}
+            {project.data.docsUrl && (
+              <a class="btn btn-ghost" href={project.data.docsUrl} rel="noopener">Docs ↗</a>
+            )}
+          </div>
+        </div>
+
+        <ul class="stack" aria-label="Stack">
+          {project.data.stack.map((item) => <li class="tag">{item}</li>)}
+        </ul>
+      </div>
+    </header>
+
+    <div class="shell case-grid">
+      <div class="case-main">
+        <section class="outcomes" aria-labelledby="outcomes-title">
+          <h2 id="outcomes-title">{labels.outcomes}</h2>
+          <div class="outcome-list">
+            {project.data.outcomes.map((outcome, index) => (
+              <div class="outcome">
+                <span class="outcome-index mono">{String(index + 1).padStart(2, '0')}</span>
+                <div class="outcome-body">
+                  <p class="outcome-metric mono">{outcome.metric}</p>
+                  <p class="outcome-claim">{outcome.claim}</p>
+                  <p class="outcome-method"><span class="method-label">Method</span> {outcome.method}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <div class="prose case-body">
+          <Content />
+        </div>
+      </div>
+
+      <aside class="case-side">
+        <div class="side-block glass">
+          <h2 class="side-title">{labels.evidence}</h2>
+          <ul class="evidence">
+            {project.data.evidence.map((url) => (
+              <li>
+                <a class="arrow-link" href={url} rel="noopener">{new URL(url).pathname.split('/').pop()}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="side-block differently">
+          <h2 class="side-title">{labels.differently}</h2>
+          <p>{project.data.whatIdDoDifferently}</p>
+        </div>
+
+        <div class="side-block">
+          <h2 class="side-title">Stacks in this portfolio</h2>
+          <ul class="side-tags">
+            {stacks.slice(0, 6).map((stack) => (
+              <li><a class="tag" href={`/projects/stack/${stack.slug}`}>{stack.label} · {stack.count}</a></li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    {related.length > 0 && (
+      <section class="section related">
+        <div class="shell">
+          <h2 class="related-title">Next case study</h2>
+          <div class="related-grid">
+            {related.map((entry) => (
+              <a class="related-card card" href={`/projects/${entry.id}`}>
+                <span class="mono related-meta">{labels.category[entry.data.category]}</span>
+                <h3>{entry.data.title}</h3>
+                <p>{entry.data.description}</p>
+                <span class="arrow-link">Read it</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .case-head {
+    padding-top: clamp(2rem, 5vw, 3.5rem);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .crumbs {
+    display: flex;
+    gap: 0.5rem;
+    color: var(--muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--space-md);
+  }
+
+  .crumbs a:hover {
+    color: var(--accent);
+  }
+
+  .head-grid {
+    display: grid;
+    gap: var(--space-md);
+    align-items: end;
+  }
+
+  .head-copy {
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .head-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .meta-item {
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .status-live { color: var(--success); border-color: color-mix(in oklab, var(--success) 35%, transparent); }
+  .status-wip { color: var(--warning); border-color: color-mix(in oklab, var(--warning) 35%, transparent); }
+
+  .head-copy h1 {
+    max-width: 24ch;
+  }
+
+  .head-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    list-style: none;
+    margin: var(--space-md) 0 0;
+    padding: 0;
+  }
+
+  .case-grid {
+    display: grid;
+    gap: var(--space-xl);
+    padding-top: var(--space-lg);
+  }
+
+  .case-main {
+    min-width: 0;
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .outcomes {
+    padding: var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background:
+      radial-gradient(30rem 16rem at 0% 0%, color-mix(in oklab, var(--accent) 10%, transparent), transparent 70%),
+      var(--surface);
+  }
+
+  .outcomes h2 {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: var(--space-sm);
+  }
+
+  .outcome-list {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .outcome {
+    display: grid;
+    grid-template-columns: 1.8rem 1fr;
+    gap: 0.6rem;
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--border);
+  }
+
+  .outcome:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .outcome-index {
+    color: var(--accent);
+    font-size: 0.7rem;
+    padding-top: 0.2rem;
+  }
+
+  .outcome-body {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .outcome-metric {
+    color: var(--text);
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .outcome-claim {
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+
+  .outcome-method {
+    color: var(--muted);
+    font-size: 0.76rem;
+    line-height: 1.5;
+  }
+
+  .method-label {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.65rem;
+    color: color-mix(in oklab, var(--accent) 80%, var(--muted));
+    margin-right: 0.3rem;
+  }
+
+  .case-body {
+    max-width: none;
+  }
+
+  .case-side {
+    display: grid;
+    gap: var(--space-md);
+    align-content: start;
+  }
+
+  .side-block {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .side-title {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .differently {
+    padding: var(--space-sm);
+    border-left: 2px solid var(--accent);
+    background: color-mix(in oklab, var(--accent) 6%, transparent);
+  }
+
+  .differently p {
+    color: color-mix(in oklab, var(--text) 82%, var(--muted));
+    font-size: 0.86rem;
+    line-height: 1.6;
+  }
+
+  .evidence {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .side-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .side-tags a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .related {
+    border-top: 1px solid var(--border);
+  }
+
+  .related-title {
+    font-size: var(--step-1);
+    margin-bottom: var(--space-md);
+  }
+
+  .related-grid {
+    display: grid;
+    gap: var(--space-sm);
+    grid-template-columns: 1fr;
+  }
+
+  .related-card {
+    text-decoration: none;
+  }
+
+  .related-meta {
+    color: var(--muted);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .related-card h3 {
+    font-size: var(--step-1);
+  }
+
+  .related-card p {
+    color: var(--muted);
+    font-size: 0.86rem;
+  }
+
+  @media (min-width: 760px) {
+    .head-grid {
+      grid-template-columns: 1fr auto;
+    }
+    .related-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .case-grid {
+      grid-template-columns: minmax(0, 1fr) 20rem;
+      gap: var(--space-xl);
+    }
+    .case-side {
+      position: sticky;
+      top: 6rem;
+    }
+  }
+</style>

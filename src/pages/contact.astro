@@ -1,0 +1,241 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getContactPage, getSeo, getSiteConfig } from '../lib/config';
+
+const site = getSiteConfig();
+const seo = getSeo();
+const page = getContactPage();
+
+const title = seo.pages['/contact']?.title ?? `Contact — ${site.name}`;
+const description = seo.pages['/contact']?.description ?? seo.default.description;
+const mailto = `mailto:${site.email}`;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="page-head">
+    <div class="shell">
+      <p class="eyebrow">{page.eyebrow}</p>
+      <h1 class="display reveal">{page.title}</h1>
+      <p class="lede">{page.intro}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell contact-grid">
+      <div class="contact-side">
+        <a class="channel primary" href={mailto}>
+          <span class="channel-label mono">{page.channels.email_label}</span>
+          <span class="channel-value">{site.email}</span>
+          <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="channel" href={site.socials.github} rel="me noopener">
+          <span class="channel-label mono">{page.channels.github_label}</span>
+          <span class="channel-value">github.com/naimul3103</span>
+          <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="channel" href={site.socials.linkedin} rel="me noopener">
+          <span class="channel-label mono">{page.channels.linkedin_label}</span>
+          <span class="channel-value">in/naimul3103</span>
+          <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+
+        <div class="availability glass">
+          <span class="status-dot" aria-hidden="true"></span>
+          <div>
+            <p class="availability-title">{site.availability_text}</p>
+            <p class="availability-note">{page.channels.response_note}</p>
+          </div>
+        </div>
+      </div>
+
+      <form class="contact-form glass" action={mailto} method="post" enctype="text/plain">
+        <div class="field">
+          <label for="name">{page.form.name_label}</label>
+          <input id="name" name="name" type="text" autocomplete="name" required placeholder="Your name" />
+        </div>
+
+        <div class="field">
+          <label for="email">{page.form.email_label}</label>
+          <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@company.com" />
+        </div>
+
+        <div class="field">
+          <label for="subject">{page.form.subject_label}</label>
+          <select id="subject" name="subject">
+            {page.subjects.map((subject) => <option value={subject}>{subject}</option>)}
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="message">{page.form.message_label}</label>
+          <textarea id="message" name="message" rows="6" required placeholder={page.form.message_hint}></textarea>
+          <p class="hint">{page.form.message_hint}</p>
+        </div>
+
+        <button class="btn btn-primary" type="submit">
+          {page.form.submit_label}
+          <span aria-hidden="true">→</span>
+        </button>
+
+        <p class="privacy">{page.form.privacy}</p>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+    padding-bottom: var(--space-md);
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .page-head h1 { max-width: 20ch; }
+
+  .contact-grid {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
+  .contact-side {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .channel {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.15rem 0.8rem;
+    align-items: center;
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast);
+  }
+
+  .channel:hover {
+    border-color: color-mix(in oklab, var(--accent) 50%, var(--border));
+    transform: translateY(-2px);
+  }
+
+  .channel-label {
+    grid-column: 1;
+    color: var(--muted);
+    font-size: 0.66rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .channel-value {
+    grid-column: 1;
+    font-size: 0.95rem;
+    letter-spacing: -0.01em;
+  }
+
+  .channel .arrow {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    color: var(--muted);
+  }
+
+  .channel.primary {
+    background: linear-gradient(120deg, color-mix(in oklab, var(--accent) 12%, transparent), transparent 70%);
+    border-color: color-mix(in oklab, var(--accent) 35%, var(--border));
+  }
+
+  .channel.primary .channel-value {
+    font-size: var(--step-0);
+  }
+
+  .availability {
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+    padding: var(--space-sm);
+    margin-top: 0.4rem;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    margin-top: 0.4rem;
+    border-radius: 50%;
+    background: var(--success);
+    animation: pulse-dot 2.6s ease-in-out infinite;
+    flex: none;
+  }
+
+  .availability-title {
+    font-size: 0.86rem;
+  }
+
+  .availability-note {
+    color: var(--muted);
+    font-size: 0.78rem;
+    margin-top: 0.15rem;
+  }
+
+  .contact-form {
+    padding: var(--space-md);
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .field {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    transition: border-color var(--transition-fast);
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 8rem;
+  }
+
+  .hint {
+    color: var(--muted);
+    font-size: 0.72rem;
+  }
+
+  .privacy {
+    color: var(--muted);
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 900px) {
+    .contact-grid {
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: var(--space-xl);
+    }
+  }
+</style>

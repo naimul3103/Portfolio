@@ -1,0 +1,207 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getNowPage, getSeo, getSiteConfig } from '../lib/config';
+import { daysSince, formatDate, isoDate } from '../lib/format';
+
+const site = getSiteConfig();
+const seo = getSeo();
+const page = getNowPage();
+const age = daysSince(page.updated);
+
+const title = seo.pages['/now']?.title ?? `Now — ${site.name}`;
+const description = seo.pages['/now']?.description ?? seo.default.description;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="page-head">
+    <div class="shell">
+      <p class="eyebrow">{page.eyebrow}</p>
+      <h1 class="display reveal">{page.title}</h1>
+      <p class="lede">{page.intro}</p>
+      <p class="stamp mono">
+        <time datetime={isoDate(page.updated)}>Updated {formatDate(page.updated)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{age} {age === 1 ? 'day' : 'days'} ago</span>
+        {age > 45 && <span class="stale">probably stale</span>}
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell now-grid">
+      <div class="focus">
+        <h2 class="block-title">Focus</h2>
+        <ol class="focus-list">
+          {page.focus.map((item) => <li>{item}</li>)}
+        </ol>
+      </div>
+
+      <div class="panels">
+        <article class="panel">
+          <h2 class="block-title">{page.building.title}</h2>
+          <ul>{page.building.items.map((item) => <li>{item}</li>)}</ul>
+        </article>
+        <article class="panel">
+          <h2 class="block-title">{page.learning.title}</h2>
+          <ul>{page.learning.items.map((item) => <li>{item}</li>)}</ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="looking glass">
+        <div>
+          <h2>{page.looking_for.title}</h2>
+          <p>{page.looking_for.body}</p>
+        </div>
+        <div class="looking-actions">
+          <a class="btn btn-primary" href="/contact">Get in touch</a>
+          <span class="mono note">{page.contact_note}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+    padding-bottom: var(--space-md);
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .page-head h1 { max-width: 22ch; }
+
+  .stamp {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .stale {
+    color: var(--warning);
+  }
+
+  .now-grid {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
+  .block-title {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: var(--space-xs);
+  }
+
+  .focus-list {
+    list-style: none;
+    counter-reset: focus;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .focus-list li {
+    counter-increment: focus;
+    display: grid;
+    grid-template-columns: 2rem 1fr;
+    gap: 0.5rem;
+    font-size: var(--step-0);
+    line-height: 1.55;
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .focus-list li::before {
+    content: counter(focus, decimal-leading-zero);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    padding-top: 0.35rem;
+  }
+
+  .panels {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .panel {
+    padding: var(--space-sm) var(--space-md);
+    border-left: 1px solid var(--border);
+  }
+
+  .panel ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.45rem;
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.55;
+  }
+
+  .panel li::marker {
+    color: var(--accent);
+  }
+
+  .looking {
+    display: grid;
+    gap: var(--space-md);
+    padding: clamp(1.3rem, 4vw, 2.4rem);
+    border-radius: var(--radius-lg);
+    background:
+      radial-gradient(34rem 16rem at 100% 0%, color-mix(in oklab, var(--accent) 14%, transparent), transparent 70%),
+      var(--glass);
+  }
+
+  .looking h2 {
+    font-size: var(--step-1);
+  }
+
+  .looking p {
+    margin-top: 0.4rem;
+    color: var(--muted);
+    max-width: 56ch;
+  }
+
+  .looking-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .looking-actions .note {
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+
+  @media (min-width: 900px) {
+    .now-grid {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: var(--space-xl);
+    }
+    .looking {
+      grid-template-columns: 1.4fr 0.8fr;
+      align-items: center;
+    }
+    .looking-actions {
+      justify-content: flex-end;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+  }
+</style>

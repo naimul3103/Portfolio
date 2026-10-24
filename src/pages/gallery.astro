@@ -1,0 +1,215 @@
+---
+import { getCollection } from 'astro:content';
+import { readdirSync } from 'node:fs';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getGalleryPage, getSeo, getSiteConfig } from '../lib/config';
+import { formatDate } from '../lib/format';
+
+const site = getSiteConfig();
+const seo = getSeo();
+const page = getGalleryPage();
+
+// An empty collection is legal content, but Astro warns when the directory has
+// no entries at all. Check first so the build log stays honest.
+const hasPhotos = readdirSync('content/photos').some((file) => file.endsWith('.md'));
+const photos = hasPhotos
+  ? (await getCollection('photos')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  : [];
+
+const title = seo.pages['/gallery']?.title ?? `Gallery — ${site.name}`;
+const description = seo.pages['/gallery']?.description ?? seo.default.description;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="page-head">
+    <div class="shell">
+      <p class="eyebrow">{page.eyebrow}</p>
+      <h1 class="display reveal">{page.title}</h1>
+      <p class="lede">{page.intro}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      {photos.length === 0 ? (
+        <div class="empty glass">
+          <div class="empty-mark" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <h2>{page.empty.title}</h2>
+          <p>{page.empty.body}</p>
+          <a class="btn btn-ghost" href={page.empty.action_href}>{page.empty.action_label}</a>
+        </div>
+      ) : (
+        <>
+          <ul class="gallery" data-gallery>
+            {photos.map((photo, index) => (
+              <li class="shot">
+                <button
+                  type="button"
+                  class="shot-button"
+                  data-src={photo.data.image}
+                  data-title={photo.data.title}
+                  data-alt={photo.data.alt}
+                  data-meta={[
+                    photo.data.location,
+                    photo.data.exif?.camera,
+                    photo.data.exif?.settings,
+                    formatDate(photo.data.date),
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
+                  aria-label={`Open ${photo.data.title}`}
+                >
+                  <img src={photo.data.image} alt={photo.data.alt} loading={index < 2 ? 'eager' : 'lazy'} />
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <dialog class="lightbox" data-lightbox>
+            <button type="button" class="close" data-close aria-label="Close">✕</button>
+            <img data-lightbox-img alt="" />
+            <div class="lightbox-meta">
+              <h2 data-lightbox-title></h2>
+              <p class="mono" data-lightbox-meta></p>
+            </div>
+          </dialog>
+          <script is:inline src="/gallery.js" defer></script>
+        </>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+    padding-bottom: var(--space-md);
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .empty {
+    padding: clamp(1.5rem, 4vw, 3rem);
+    display: grid;
+    gap: var(--space-sm);
+    justify-items: start;
+  }
+
+  .empty h2 {
+    font-size: var(--step-1);
+  }
+
+  .empty p {
+    color: var(--muted);
+    max-width: 52ch;
+  }
+
+  .empty-mark {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+    width: 48px;
+    margin-bottom: 0.4rem;
+  }
+
+  .empty-mark span {
+    aspect-ratio: 1;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+  }
+
+  .empty-mark span:nth-child(1) { background: color-mix(in oklab, var(--accent) 30%, transparent); }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .shot-button {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--surface);
+    cursor: zoom-in;
+  }
+
+  .shot-button img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .shot-button:hover img {
+    transform: scale(1.02);
+  }
+
+  .lightbox {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0;
+    background: var(--surface);
+    color: var(--text);
+    max-width: min(92vw, 64rem);
+  }
+
+  .lightbox::backdrop {
+    background: color-mix(in oklab, var(--bg) 82%, transparent);
+    backdrop-filter: blur(6px);
+  }
+
+  .lightbox img {
+    width: 100%;
+    max-height: 74vh;
+    object-fit: contain;
+  }
+
+  .lightbox-meta {
+    padding: var(--space-sm);
+    border-top: 1px solid var(--border);
+  }
+
+  .lightbox-meta h2 {
+    font-size: var(--step-0);
+  }
+
+  .lightbox-meta p {
+    color: var(--muted);
+    font-size: 0.7rem;
+    margin-top: 0.25rem;
+  }
+
+  .close {
+    position: absolute;
+    right: 0.6rem;
+    top: 0.6rem;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  @media (min-width: 680px) {
+    .gallery {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .gallery {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
