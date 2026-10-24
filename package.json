@@ -1,0 +1,53 @@
+{
+  "name": "naimul-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Production-grade personal portfolio for Md Naimul Islam — Astro 5, Tailwind 4, git-as-database content engine.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "dev": "npm run tokens && astro dev",
+    "start": "npm run dev",
+    "tokens": "node scripts/tokens.mjs",
+    "prebuild": "npm run tokens && npm run check:content",
+    "build": "astro build && pagefind --site dist",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "check:contrast": "node scripts/check-contrast.mjs",
+    "check:hex": "node scripts/check-no-hex.mjs",
+    "check:content": "node scripts/check-content.mjs && npm run check:contrast && npm run check:hex",
+    "check:size": "node scripts/check-size.mjs",
+    "og": "node scripts/og.mjs",
+    "vendor:admin": "node scripts/vendor-admin.mjs",
+    "format": "biome format --write .",
+    "audit:content": "python3 scripts/python/content_audit.py",
+    "links": "node scripts/check-links.mjs"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "4.3.14",
+    "@astrojs/rss": "4.0.19",
+    "@astrojs/sitemap": "3.7.4",
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
+    "@tailwindcss/vite": "4.3.3",
+    "astro": "5.18.2",
+    "tailwindcss": "4.3.3",
+    "yaml": "2.9.1",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@biomejs/biome": "2.6.2",
+    "pagefind": "1.5.2",
+    "sharp": "0.35.5",
+    "typescript": "5.9.3",
+    "vitest": "3.2.7"
+  }
+}

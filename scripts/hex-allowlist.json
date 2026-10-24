@@ -1,0 +1,4 @@
+{
+  "comment": "Files permitted to contain literal colours. Keep this empty unless an inline SVG genuinely cannot use currentColor/var().",
+  "allow": []
+}
