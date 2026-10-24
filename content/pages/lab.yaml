@@ -1,0 +1,36 @@
+eyebrow: Lab
+title: Experiments, with the limits stated first.
+intro: >-
+  A lab page is only useful if it is honest. These are small models and
+  analyses I have built and evaluated locally. Nothing here is pretending to be
+  a product, and each entry names the data it was trained on and where it fails.
+
+notice: >-
+  The demos run locally today. Deploying them needs a GPU-free host and a
+  rate-limit budget, which is a Phase 6 decision — not a promise on a landing page.
+
+demos:
+  - title: Sentiment analyzer
+    status: in-development
+    description: A text classifier that labels short reviews as positive or negative, with a confidence score rather than a bare label.
+    stack: [Python, scikit-learn, TF-IDF, FastAPI]
+    model: Linear SVM on TF-IDF features
+    data: Public movie-review corpus, cleaned and split 80/20
+    limits: Sarcasm and mixed-language reviews are its weak spot. Confidence is not calibrated yet.
+    source: https://github.com/naimul3103
+  - title: Image classifier
+    status: planned
+    description: Transfer learning on a small, real dataset — the point is the evaluation, not the architecture.
+    stack: [Python, PyTorch, torchvision]
+    model: ResNet-18, fine-tuned
+    data: Not chosen yet
+    limits: No deployed version. No published claim until there is a measured baseline.
+    source: /lab
+  - title: Content refresh ranking
+    status: shipped
+    description: A ranking model over 30,000 anonymised content rows, built to answer one question — which pages should be reviewed first.
+    stack: [Python, scikit-learn, pandas]
+    model: Random forest, selected by precision@50
+    data: 30,000 rows, client-holdout validation
+    limits: Precision@50 of 0.74 is a ranking result, not a causal claim about refreshing.
+    source: /projects/ml-internship-week1

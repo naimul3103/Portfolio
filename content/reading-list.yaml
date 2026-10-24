@@ -1,0 +1,21 @@
+# List-file (spreadsheet-shaped) so it is pleasant to edit in the CMS.
+books:
+  - title: Designing Data-Intensive Applications
+    author: Martin Kleppmann
+    status: reading
+    tags: [engineering, architecture]
+    started: 2026-08-01
+    review: Slow on purpose. The chapter on replication changed how I read every API design.
+  - title: Deep Learning with Python
+    author: François Chollet
+    status: reading
+    tags: [machine-learning]
+    review: The clearest explanation of why a model fails that I have found.
+  - title: The Pragmatic Programmer
+    author: Andrew Hunt, David Thomas
+    status: want-to-read
+    tags: [engineering]
+  - title: Storytelling with Data
+    author: Cole Nussbaumer Knaflic
+    status: want-to-read
+    tags: [communication, data]

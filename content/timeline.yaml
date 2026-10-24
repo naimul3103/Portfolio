@@ -1,0 +1,29 @@
+# The About page timeline. Newest first; the component sorts by `order`.
+entries:
+  - year: "2026"
+    title: B.Sc. in Computer Science & Engineering
+    org: Graduated
+    kind: education
+    description: Coursework across machine learning, algorithms, data structures and software engineering — the foundation under every project here.
+  - year: "2026"
+    title: Content-refresh ranking model
+    org: Applied ML project
+    kind: project
+    description: A 30,000-row ranking problem where precision@50 mattered more than accuracy. Random forest won; the report and the notebook are public.
+    href: /projects/ml-internship-week1
+  - year: "2026"
+    title: Developer Skill Tracker API
+    org: Personal project
+    kind: project
+    description: A production-style FastAPI service with referential integrity, partial updates and generated documentation.
+    href: /projects/skill-tracker-api
+  - year: "2024"
+    title: First serious code
+    org: C, C++, then Python
+    kind: milestone
+    description: Data structures in C++, small tools in Python, and the habit of finishing things instead of collecting tutorials.
+  - year: Now
+    title: Looking for the first role
+    org: Open to internships and junior positions
+    kind: milestone
+    description: Remote or Dhaka. AI/ML engineering, Python backend, or a team that needs both.

@@ -1,0 +1,33 @@
+eyebrow: Now
+title: What I am doing this month.
+intro: >-
+  A dated snapshot, not a biography. If this page gets stale, the date below
+  will tell you before I do.
+
+updated: 2026-10-24
+
+focus:
+  - Building this site — Astro, a typed content model, and a CI gate for every claim it makes.
+  - Applying for internships and junior roles in AI/ML and Python backend engineering.
+  - "Working through model evaluation properly: precision@k, holdout strategy, and what a baseline is for."
+
+building:
+  title: On the bench
+  items:
+    - A retrieval-augmented assistant over this site's own content — designed, not deployed.
+    - A small FastAPI service template with validation, tests and generated docs.
+
+learning:
+  title: Learning
+  items:
+    - Designing Data-Intensive Applications — the replication chapters.
+    - Evaluation design for ranking systems.
+
+looking_for:
+  title: Looking for
+  body: >-
+    A first role where the work is judged by what ships. Internship or junior,
+    remote or Dhaka. I would rather join a team with hard problems than a team
+    with a nice logo.
+
+contact_note: The fastest way to reach me is email.

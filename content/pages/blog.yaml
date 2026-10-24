@@ -1,0 +1,24 @@
+eyebrow: Writing
+title: Notes from building things.
+intro: >-
+  Mostly technical. Occasionally about learning. Everything here was written by
+  me and edited at least once.
+
+empty:
+  title: Nothing published yet
+  body: The first post is being written. The RSS feed will have it the moment it lands.
+  action_label: Subscribe by RSS
+
+categories:
+  technical: Technical
+  learning-journey: Learning journey
+  book-review: Book review
+  notes: Notes
+
+labels:
+  read_time: min read
+  updated: Updated
+  ai_generated: AI-assisted
+  ai_disclosure: Drafted with AI assistance from my own notebooks, then reviewed line by line.
+  related: Related reading
+  toc: On this page
