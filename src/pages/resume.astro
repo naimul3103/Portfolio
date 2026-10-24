@@ -565,46 +565,10 @@ const languages = resume.languages.map((language) => ({
     }
   }
 
-  /* ── Print: the résumé is the product here, so print gets first-class CSS ── */
+  /* ── Print: the document is the product ─────────────────────────────────── */
   @media print {
-    :root {
-      --bg: white;
-      --surface: white;
-      --surface-elevated: white;
-      --text: black;
-      --muted: dimgray;
-      --border: silver;
-      --accent: black;
-    }
-
-    :global(body) {
-      background: white !important;
-    }
-
-    :global(body)::before,
-    :global(body)::after {
-      display: none !important;
-    }
-
-    :global(.site-header),
-    :global(.site-footer),
-    :global(.skip-link),
-    .no-print,
-    .print-hint {
-      display: none !important;
-    }
-
     .resume-head {
-      padding: 0 0 0.5rem;
-      border: 0;
-    }
-
-    .resume-head h1 {
-      font-size: 18pt;
-    }
-
-    .role-line {
-      font-size: 9pt;
+      display: none !important;
     }
 
     .resume-wrap {
@@ -616,49 +580,125 @@ const languages = resume.languages.map((language) => ({
       max-width: none;
       padding: 0;
       border: 0;
-      box-shadow: none;
       border-radius: 0;
+      box-shadow: none;
       background: white;
     }
 
+    /* Stack the header so long URLs wrap instead of running off the page. */
     .doc-head {
+      display: block;
+      padding-bottom: 4pt;
       border-bottom: 1.5pt solid black;
     }
 
-    .doc-section {
-      break-inside: avoid;
+    .doc-head h2 {
+      font-size: 17pt;
     }
 
-    .entry {
-      break-inside: avoid;
-    }
-
-    .summary,
-    .entry-desc,
-    .bullets,
-    .skill-grid dd {
-      color: black;
+    .doc-role {
+      margin-top: 1pt;
       font-size: 9.5pt;
     }
 
-    .doc-role,
-    .doc-head address,
-    .doc-head address a,
-    .entry-link,
-    .entry-date,
-    .entry-tech,
-    .doc-section h3,
-    .euro-main h3,
-    .euro-side h3,
-    .language-list .mono {
-      color: black;
+    .doc-head address {
+      margin-top: 4pt;
+      text-align: left;
+      font-size: 8.5pt;
+      line-height: 1.45;
+    }
+
+    .doc-head address a {
+      display: inline;
+      margin-right: 10pt;
+    }
+
+    .doc-section {
+      padding-top: 8pt;
     }
 
     .doc-section h3,
     .euro-main h3,
     .euro-side h3 {
+      margin-bottom: 4pt;
+      padding-bottom: 1.5pt;
       border-bottom: 0.5pt solid black;
-      padding-bottom: 2pt;
+      font-size: 7.5pt;
+      letter-spacing: 0.12em;
+      color: black;
+    }
+
+    .summary {
+      font-size: 9pt;
+      line-height: 1.45;
+    }
+
+    .entry {
+      padding-block: 4pt;
+    }
+
+    .entry h4 {
+      font-size: 9.5pt;
+    }
+
+    /* Block layout in print: a long repository URL must wrap onto its own line,
+       never run past the right margin. */
+    .entry-head {
+      display: block;
+    }
+
+    .entry-head h4 {
+      margin-bottom: 1pt;
+    }
+
+    .entry-link,
+    .entry-date {
+      display: block;
+    }
+
+    .entry-link,
+    .entry-date,
+    .entry-tech {
+      font-size: 7.5pt;
+      overflow-wrap: anywhere;
+    }
+
+    .entry-desc,
+    .bullets {
+      font-size: 8.5pt;
+      line-height: 1.4;
+    }
+
+    .skill-grid > div {
+      grid-template-columns: 7.5rem 1fr;
+      gap: 4pt;
+      font-size: 8.5pt;
+    }
+
+    .skill-grid dt {
+      font-size: 7pt;
+    }
+
+    .language-list {
+      gap: 16pt;
+      font-size: 8.5pt;
+    }
+
+    .euro-head {
+      border-bottom: 1pt solid black;
+    }
+
+    .euro-side {
+      border-right: 0.5pt solid black;
+      font-size: 8.5pt;
+    }
+
+    .euro-lang p {
+      font-size: 8.5pt;
+    }
+
+    .euro-contact {
+      text-align: left;
     }
 
     @page {
@@ -666,4 +706,5 @@ const languages = resume.languages.map((language) => ({
       margin: 14mm;
     }
   }
+
 </style>

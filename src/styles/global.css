@@ -641,3 +641,51 @@
     box-shadow: 0 0 0 5px color-mix(in oklab, var(--success) 0%, transparent);
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Print: only the document prints. These rules are global (not scoped to a
+   component) so the page canvas, chrome and decorative layers are always reset,
+   regardless of which template renders.
+   ───────────────────────────────────────────────────────────────────────────── */
+@media print {
+  /* Re-point the tokens at print-safe values: components keep using var(--…),
+     but the dark palette must not reach paper. */
+  :root {
+    --bg: white;
+    --surface: white;
+    --surface-elevated: white;
+    --text: black;
+    --muted: black;
+    --border: gray;
+    --accent: black;
+    --gradient-a: black;
+    --gradient-b: black;
+  }
+
+  html,
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  body::before,
+  body::after {
+    display: none !important;
+  }
+
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .no-print {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  a {
+    color: black !important;
+    text-decoration: none !important;
+  }
+}
