@@ -8,8 +8,8 @@ export type Project = CollectionEntry<'projects'>;
  * frontmatter field rather than a separate environment switch, so a preview
  * deploy and a production deploy cannot disagree by accident.
  */
-const isPublished = (entry: { data: { draft?: boolean } }) =>
-  import.meta.env.DEV || entry.data.draft !== true;
+const isPublished = <T extends { data: object }>(entry: T) =>
+  import.meta.env.DEV || (entry.data as { draft?: boolean }).draft !== true;
 
 export async function getProjects(): Promise<Project[]> {
   const entries = await getCollection('projects', isPublished);

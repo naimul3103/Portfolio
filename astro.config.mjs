@@ -33,7 +33,7 @@ export default defineConfig({
     }),
   ],
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [/** @type {any} */ (tailwindcss())],
     build: {
       // Keep the first-load JS budget honest: warn early if an island grows.
       chunkSizeWarningLimit: 60,
