@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+
+# AI crawlers are allowed to read the public site; the content is meant to be read.
+User-agent: GPTBot
+Allow: /
+
+Sitemap: https://naimul3103.pages.dev/sitemap-index.xml

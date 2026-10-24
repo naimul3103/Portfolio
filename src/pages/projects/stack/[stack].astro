@@ -1,0 +1,115 @@
+---
+import ProjectCard from '../../../components/projects/ProjectCard.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getProjectsPage, getSeo, getSiteConfig } from '../../../lib/config';
+import { getProjectStacks, getProjects, type Project } from '../../../lib/projects';
+
+export async function getStaticPaths() {
+  const stacks = await getProjectStacks(2);
+  const projects = await getProjects();
+  return stacks.map((stack) => ({
+    params: { stack: stack.slug },
+    props: {
+      label: stack.label,
+      projects: projects.filter((project) =>
+        project.data.stack.some(
+          (item) =>
+            item
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '') === stack.slug,
+        ),
+      ),
+    },
+  }));
+}
+
+interface Props {
+  label: string;
+  projects: Project[];
+}
+
+const { label, projects } = Astro.props as Props;
+const site = getSiteConfig();
+const seo = getSeo();
+const page = getProjectsPage();
+const title = `${label} projects — ${site.name}`;
+const description = `Case studies built with ${label}. Each one states the problem, the measurement and what would change next time.`;
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="page-head">
+    <div class="shell">
+      <nav class="crumbs mono" aria-label="Breadcrumb">
+        <a href="/projects">{page.filters.all_label}</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{label}</span>
+      </nav>
+      <h1 class="display">{label}</h1>
+      <p class="lede">{projects.length} case {projects.length === 1 ? 'study' : 'studies'} in this stack.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      {projects.length === 0 ? (
+        <div class="empty glass">
+          <h2>{page.empty.title}</h2>
+          <p>{page.empty.body}</p>
+          <a class="btn btn-ghost" href="/projects">{page.empty.action_label}</a>
+        </div>
+      ) : (
+        <div class="grid">
+          {projects.map((project, index) => (
+            <ProjectCard project={project} index={String(index + 1).padStart(2, '0')} />
+          ))}
+        </div>
+      )}
+      <p class="back"><a class="arrow-link" href="/projects">All projects</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-top: clamp(2.5rem, 6vw, 4rem);
+    padding-bottom: var(--space-lg);
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .crumbs {
+    display: flex;
+    gap: 0.45rem;
+    color: var(--muted);
+    font-size: 0.72rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .crumbs a:hover {
+    color: var(--accent);
+  }
+
+  .grid {
+    display: grid;
+    gap: var(--space-sm);
+    grid-template-columns: 1fr;
+  }
+
+  .empty {
+    padding: var(--space-lg);
+    display: grid;
+    gap: var(--space-xs);
+    justify-items: start;
+  }
+
+  .back {
+    margin-top: var(--space-md);
+  }
+
+  @media (min-width: 760px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

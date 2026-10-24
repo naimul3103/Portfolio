@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6C63FF"/>
+      <stop offset="1" stop-color="#00D4AA"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.12" cy="0.05" r="0.9">
+      <stop offset="0" stop-color="#6C63FF" stop-opacity="0.28"/>
+      <stop offset="0.6" stop-color="#6C63FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.95" cy="0.1" r="0.7">
+      <stop offset="0" stop-color="#00D4AA" stop-opacity="0.18"/>
+      <stop offset="0.7" stop-color="#00D4AA" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" fill="none" stroke="#E8E8ED" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="#0A0A0F"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect x="0" y="0" width="1200" height="4" fill="url(#accent)"/>
+
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+    <text x="80" y="150" font-size="22" letter-spacing="6" fill="#8888A0" font-family="Menlo, monospace">AI/ML ENGINEER · BANGLADESH</text>
+    <text x="80" y="270" font-size="76" font-weight="700" fill="#E8E8ED" letter-spacing="-2">Md Naimul Islam</text>
+    <text x="80" y="340" font-size="34" fill="#8888A0">I build models, then the APIs that make them useful.</text>
+  </g>
+
+  <g font-family="Menlo, monospace" font-size="20" fill="#8888A0">
+    <text x="80" y="470">python · fastapi · scikit-learn · pandas</text>
+    <text x="80" y="540" fill="#E8E8ED">naimul3103.pages.dev</text>
+  </g>
+
+  <g transform="translate(956 452)">
+    <rect width="164" height="56" rx="10" fill="none" stroke="url(#accent)" stroke-opacity="0.65"/>
+    <text x="82" y="36" text-anchor="middle" font-family="Menlo, monospace" font-size="19" fill="#E8E8ED">portfolio</text>
+  </g>
+
+  <text x="80" y="590" font-size="16" font-family="Menlo, monospace" fill="#8888A0" opacity="0.65">AI/ML Engineer · Python · FastAPI</text>
+</svg>

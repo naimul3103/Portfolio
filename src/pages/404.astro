@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getSiteConfig } from '../lib/config';
+
+const site = getSiteConfig();
+---
+
+<BaseLayout title={`Not found — ${site.name}`} description="That page does not exist. Here is the way back." noindex>
+  <section class="notfound">
+    <div class="shell">
+      <p class="eyebrow">404</p>
+      <h1 class="display">This page was never built.</h1>
+      <p class="lede">
+        Or it moved. Either way, the useful things are one click away — the work,
+        the writing, and a way to email me.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="/projects">See the work</a>
+        <a class="btn btn-ghost" href="/blog">Read the writing</a>
+        <a class="btn btn-ghost" href="/">Home</a>
+      </div>
+      <p class="mono hint">Error 404 · the sitemap is at /sitemap-index.xml</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .notfound {
+    min-height: 62vh;
+    display: grid;
+    align-content: center;
+    padding-block: var(--space-2xl);
+  }
+
+  .notfound h1 {
+    max-width: 20ch;
+    margin-top: var(--space-xs);
+  }
+
+  .notfound .lede {
+    margin-top: var(--space-sm);
+    max-width: 52ch;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: var(--space-md);
+  }
+
+  .hint {
+    margin-top: var(--space-lg);
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+</style>

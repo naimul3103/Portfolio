@@ -1,0 +1,179 @@
+---
+import PostCard from '../../components/blog/PostCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getBlogPage, getSeo, getSiteConfig } from '../../lib/config';
+import { getPosts, getPostTags } from '../../lib/posts';
+
+const site = getSiteConfig();
+const seo = getSeo();
+const page = getBlogPage();
+const posts = await getPosts();
+const tags = await getPostTags();
+
+const title = seo.pages['/blog']?.title ?? `Writing — ${site.name}`;
+const description = seo.pages['/blog']?.description ?? seo.default.description;
+const categories = Object.entries(page.categories);
+---
+
+<BaseLayout title={title} description={description}>
+  <section class="page-head">
+    <div class="shell">
+      <p class="eyebrow">{page.eyebrow}</p>
+      <h1 class="display reveal">{page.title}</h1>
+      <p class="lede">{page.intro}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell blog-grid">
+      <div>
+        <div class="filter-bar" role="navigation" aria-label="Filter by category">
+          <a class="filter active" href="/blog" aria-current="page">All</a>
+          {categories.map(([slug, label]) => (
+            <a class="filter" href={`/blog/category/${slug}`}>{label}</a>
+          ))}
+        </div>
+
+        {posts.length === 0 ? (
+          <div class="empty glass">
+            <h2>{page.empty.title}</h2>
+            <p>{page.empty.body}</p>
+            <a class="btn btn-ghost" href="/rss.xml">{page.empty.action_label}</a>
+          </div>
+        ) : (
+          <div class="post-list">
+            {posts.map((post) => <PostCard post={post} />)}
+          </div>
+        )}
+      </div>
+
+      <aside class="blog-side">
+        <div class="side-block">
+          <h2 class="side-title">Tags</h2>
+          <ul class="tag-cloud">
+            {tags.map((tag) => (
+              <li>
+                <a class="tag" href={`/blog/tag/${tag.slug}`}>#{tag.label} <span class="num">{tag.count}</span></a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="side-block">
+          <h2 class="side-title">Subscribe</h2>
+          <p class="side-note">One feed, no tracking, no newsletter.</p>
+          <a class="arrow-link" href="/rss.xml">RSS feed</a>
+        </div>
+        <div class="side-block">
+          <h2 class="side-title">Elsewhere</h2>
+          <p class="side-note">Short notes live in the notebook, not here.</p>
+          <a class="arrow-link" href="/notes">Open the notes</a>
+        </div>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-head {
+    padding-top: clamp(2.5rem, 6vw, 4.5rem);
+    padding-bottom: var(--space-md);
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .page-head h1 {
+    max-width: 22ch;
+  }
+
+  .blog-grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding-bottom: var(--space-sm);
+    margin-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .filter {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .filter:hover {
+    color: var(--text);
+    border-color: color-mix(in oklab, var(--accent) 45%, var(--border));
+  }
+
+  .filter.active {
+    color: var(--bg);
+    background: var(--text);
+    border-color: var(--text);
+  }
+
+  .post-list {
+    display: grid;
+  }
+
+  .blog-side {
+    display: grid;
+    gap: var(--space-lg);
+    align-content: start;
+  }
+
+  .side-block {
+    display: grid;
+    gap: 0.45rem;
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--border);
+  }
+
+  .side-title {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .side-note {
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .tag-cloud a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .empty {
+    padding: var(--space-lg);
+    display: grid;
+    gap: var(--space-xs);
+    justify-items: start;
+  }
+
+  @media (min-width: 960px) {
+    .blog-grid {
+      grid-template-columns: minmax(0, 1fr) 17rem;
+    }
+  }
+</style>
