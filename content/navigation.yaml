@@ -1,0 +1,44 @@
+# Navigation is content: the header and footer both read this file.
+# `url` is validated against the route registry in scripts/check-content.mjs,
+# so a nav entry can never point at a page that does not exist.
+entries:
+  - label: Work
+    url: /projects
+    visible: true
+    order: 10
+    primary: true
+  - label: Writing
+    url: /blog
+    visible: true
+    order: 20
+    primary: true
+  - label: Notes
+    url: /notes
+    visible: true
+    order: 30
+    primary: true
+  - label: About
+    url: /about
+    visible: true
+    order: 40
+    primary: true
+  - label: Lab
+    url: /lab
+    visible: true
+    order: 50
+    primary: true
+  - label: Now
+    url: /now
+    visible: true
+    order: 60
+    primary: false
+  - label: Gallery
+    url: /gallery
+    visible: true
+    order: 70
+    primary: false
+  - label: Contact
+    url: /contact
+    visible: true
+    order: 80
+    primary: false

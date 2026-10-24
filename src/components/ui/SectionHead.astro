@@ -1,0 +1,28 @@
+---
+interface Props {
+  index?: string;
+  title: string;
+  note?: string;
+  id?: string;
+}
+
+const { index, title, note, id } = Astro.props;
+---
+
+<div class="section-head" id={id}>
+  {index && <span class="index">{index}</span>}
+  <h2>{title}</h2>
+  {note && <span class="note">{note}</span>}
+</div>
+
+<style>
+  .note {
+    display: none;
+  }
+
+  @media (min-width: 760px) {
+    .note {
+      display: inline;
+    }
+  }
+</style>

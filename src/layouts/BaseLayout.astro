@@ -1,0 +1,110 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+import Footer from '../components/layout/Footer.astro';
+import Header from '../components/layout/Header.astro';
+import { getSeo, getSiteConfig } from '../lib/config';
+
+interface Props {
+  /** Full document title. Pages pass the composed string; the layout does not guess. */
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article' | 'profile';
+  noindex?: boolean;
+  /** Extra JSON-LD nodes for this page (Person/WebSite are always included). */
+  jsonLd?: Record<string, unknown>[];
+}
+
+const { title, description, image, type = 'website', noindex = false, jsonLd = [] } = Astro.props;
+const site = getSiteConfig();
+const seo = getSeo();
+
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const override = seo.pages[path];
+const documentTitle = title ?? override?.title ?? `${site.name} — ${site.role}`;
+const documentDescription = description ?? override?.description ?? seo.default.description;
+
+const canonical = new URL(path, Astro.site ?? Astro.url);
+const ogImage = new URL(image ?? seo.default.og_image, Astro.site ?? Astro.url);
+
+const person = {
+  '@type': 'Person',
+  '@id': new URL('/#person', Astro.site ?? Astro.url).href,
+  name: site.name,
+  jobTitle: site.role,
+  email: `mailto:${site.email}`,
+  url: canonical.href,
+  sameAs: [site.socials.github, site.socials.linkedin],
+  knowsAbout: [
+    'Machine Learning',
+    'Python',
+    'FastAPI',
+    'Data Analysis',
+    'scikit-learn',
+    'Backend Engineering',
+  ],
+};
+
+const graph = [
+  person,
+  {
+    '@type': 'WebSite',
+    '@id': new URL('/#website', Astro.site ?? Astro.url).href,
+    url: new URL('/', Astro.site ?? Astro.url).href,
+    name: site.name,
+    description: seo.default.description,
+    inLanguage: 'en',
+    publisher: { '@id': person['@id'] },
+  },
+  ...jsonLd,
+];
+---
+
+<!doctype html>
+<html lang="en" data-motion="subtle">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{documentTitle}</title>
+    <meta name="description" content={documentDescription} />
+    <link rel="canonical" href={canonical.href} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="generator" content={Astro.generator} />
+    <meta name="author" content={site.name} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    {site.flags.feed && <link rel="alternate" type="application/rss+xml" title={site.name} href="/rss.xml" />}
+    <link rel="me" href={site.socials.github} />
+    <link rel="me" href={site.socials.linkedin} />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={documentTitle} />
+    <meta property="og:description" content={documentDescription} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogImage.href} />
+    <meta property="og:image:alt" content={`${site.name} — ${site.role}`} />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content={seo.default.twitter_card} />
+    <meta name="twitter:title" content={documentTitle} />
+    <meta name="twitter:description" content={documentDescription} />
+    <meta name="twitter:image" content={ogImage.href} />
+
+    <script is:inline src="/theme-init.js"></script>
+    <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': graph })} />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main" data-pagefind-body>
+      <slot />
+    </main>
+    <Footer />
+    <script is:inline src="/theme.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,181 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getProjectsPage } from '../../lib/config';
+import { formatMonth } from '../../lib/format';
+import { projectPath } from '../../lib/projects';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  index?: string;
+  featured?: boolean;
+}
+
+const { project, index, featured = false } = Astro.props;
+const labels = getProjectsPage().labels;
+const data = project.data;
+const leadOutcome = data.outcomes[0];
+---
+
+<article class:list={['card', 'project-card', { featured }]}>
+  <div class="card-top">
+    <span class="index mono">{index ?? '—'}</span>
+    <span class:list={['badge', `status-${data.status}`]}>{labels.status[data.status]}</span>
+  </div>
+
+  <div class="card-body">
+    <div class="body-main">
+      <h3><a href={projectPath(project)}>{data.title}</a></h3>
+      <p class="description">{data.description}</p>
+    </div>
+
+    {leadOutcome && (
+      <p class="outcome">
+        <span class="outcome-metric mono">{leadOutcome.metric}</span>
+        <span class="outcome-claim">{leadOutcome.claim}</span>
+      </p>
+    )}
+  </div>
+
+  <ul class="tags" aria-label="Stack">
+    {data.stack.slice(0, featured ? 6 : 4).map((tag) => <li class="tag">{tag}</li>)}
+  </ul>
+
+  <div class="card-foot">
+    <span class="mono meta">{labels.category[data.category]} · {formatMonth(data.pubDate)}</span>
+    <a class="btn-text" href={projectPath(project)}>Read the case study</a>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    gap: var(--space-xs);
+    height: 100%;
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs);
+  }
+
+  .index {
+    color: var(--muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+  }
+
+  .status-live {
+    color: var(--success);
+    border-color: color-mix(in oklab, var(--success) 35%, transparent);
+  }
+
+  .status-wip {
+    color: var(--warning);
+    border-color: color-mix(in oklab, var(--warning) 35%, transparent);
+  }
+
+  .card-body {
+    display: grid;
+    gap: 0.55rem;
+    margin-block: 0.15rem;
+  }
+
+  .body-main {
+    display: grid;
+    gap: 0.55rem;
+    align-content: start;
+  }
+
+  /* The lead card gets a two-column body so a full-width card does not leave
+     half its surface empty. */
+  @media (min-width: 900px) {
+    .featured .card-body {
+      grid-template-columns: 1.3fr 1fr;
+      gap: var(--space-md);
+      align-items: start;
+    }
+    .featured h3 {
+      font-size: var(--step-2);
+      max-width: 20ch;
+    }
+    .featured .outcome {
+      margin-top: 0.2rem;
+      padding: var(--space-xs) 0 var(--space-xs) 0.9rem;
+    }
+  }
+
+  h3 {
+    font-size: var(--step-1);
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+  }
+
+  h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .description {
+    color: var(--muted);
+    font-size: var(--step--1);
+    line-height: 1.6;
+    max-width: 52ch;
+  }
+
+  .outcome {
+    display: grid;
+    gap: 0.15rem;
+    margin-top: 0.35rem;
+    padding-left: 0.7rem;
+    border-left: 2px solid color-mix(in oklab, var(--accent) 55%, transparent);
+  }
+
+  .outcome-metric {
+    color: var(--accent);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+  }
+
+  .outcome-claim {
+    color: color-mix(in oklab, var(--text) 78%, var(--muted));
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs);
+    margin-top: auto;
+    padding-top: 0.4rem;
+  }
+
+  .meta {
+    color: var(--muted);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .btn-text {
+    position: relative;
+    z-index: 2;
+    background: none;
+    border: 0;
+    min-height: 40px;
+    font-size: 0.78rem;
+  }
+</style>
