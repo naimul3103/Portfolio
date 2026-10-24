@@ -67,6 +67,19 @@
 - Documentation set: architecture, content model, design system, deployment,
   CMS, secrets, quality, this log, and a content checklist.
 
+## 2026-10-24 — Verification and fixes after first deploy
+
+- CI green on the first push (install, gates, lint, types, tests, build, budgets, links).
+- `astro check` surfaced two real type errors: the publication filter's constraint
+  and a duplicated Vite type between Astro and the Tailwind plugin. Both fixed at
+  the seam rather than silenced globally.
+- Print QA on the actual PDF found three defects the browser never shows: the site
+  header duplicated the name, dark-palette greys reached paper, and long repository
+  URLs clipped at the right margin. The print block now re-points the tokens,
+  hides chrome and stacks entry rows. Result: one A4 page, all black, nothing clipped.
+- Light-theme QA: the monogram's near-white text disappeared on the darker light
+  gradient; it now uses a solid accent chip in light mode.
+
 ## Decisions worth remembering
 
 | Decision                                 | Reason                                                                                     |
