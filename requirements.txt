@@ -1,0 +1,7 @@
+# Python tooling (optional). The site runtime is Node — this file exists for the
+# content audit helper, which is faster to write in Python and does not run in CI.
+#
+#   python3 -m venv .venv && . .venv/bin/activate
+#   pip install -r requirements.txt
+#   npm run audit:content
+PyYAML==6.0.3
