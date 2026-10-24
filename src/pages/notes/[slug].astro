@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getBlogPage, getSeo, getSiteConfig } from '../../lib/config';
+import { getBlogPage, getSiteConfig } from '../../lib/config';
 import { formatDate, isoDate, readingTime } from '../../lib/format';
 import { getNotes, type Note } from '../../lib/posts';
 
@@ -16,7 +16,7 @@ interface Props {
 
 const { note } = Astro.props as Props;
 const site = getSiteConfig();
-const seo = getSeo();
+
 const labels = getBlogPage();
 const { Content } = await render(note);
 const all = await getNotes();

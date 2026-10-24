@@ -1,7 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getProjectsPage, getSeo, getSiteConfig } from '../../lib/config';
+import { getProjectsPage, getSiteConfig } from '../../lib/config';
 import { formatDate } from '../../lib/format';
 import { getProjectStacks, type Project } from '../../lib/projects';
 
@@ -16,7 +16,7 @@ interface Props {
 
 const { project } = Astro.props as Props;
 const site = getSiteConfig();
-const seo = getSeo();
+
 const page = getProjectsPage();
 const labels = page.labels;
 const { Content } = await render(project);

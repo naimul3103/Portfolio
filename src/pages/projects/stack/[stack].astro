@@ -1,7 +1,7 @@
 ---
 import ProjectCard from '../../../components/projects/ProjectCard.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getProjectsPage, getSeo, getSiteConfig } from '../../../lib/config';
+import { getProjectsPage, getSiteConfig } from '../../../lib/config';
 import { getProjectStacks, getProjects, type Project } from '../../../lib/projects';
 
 export async function getStaticPaths() {
@@ -31,7 +31,7 @@ interface Props {
 
 const { label, projects } = Astro.props as Props;
 const site = getSiteConfig();
-const seo = getSeo();
+
 const page = getProjectsPage();
 const title = `${label} projects — ${site.name}`;
 const description = `Case studies built with ${label}. Each one states the problem, the measurement and what would change next time.`;

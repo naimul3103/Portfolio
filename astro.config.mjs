@@ -12,6 +12,10 @@ import { defineConfig } from 'astro/config';
  */
 const site = process.env.PUBLIC_SITE_URL ?? 'https://naimul3103.pages.dev';
 
+// Astro and the Tailwind plugin resolve different Vite copies in this workspace;
+// the runtime plugin is compatible, the duplicated types are not. Cast at the seam.
+const tailwind = /** @type {any} */ (tailwindcss());
+
 export default defineConfig({
   site,
   output: 'static',
@@ -33,7 +37,7 @@ export default defineConfig({
     }),
   ],
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwind],
     build: {
       // Keep the first-load JS budget honest: warn early if an island grows.
       chunkSizeWarningLimit: 60,
