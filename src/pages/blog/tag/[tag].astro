@@ -27,7 +27,7 @@ const title = `#${label} — ${site.name}`;
 const description = `Writing tagged ${label}.`;
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} noindex={posts.length < 2}>
   <section class="page-head">
     <div class="shell">
       <nav class="crumbs mono" aria-label="Breadcrumb">

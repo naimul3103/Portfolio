@@ -22,7 +22,7 @@
 | ------------------ | -------------------- | ------------------------------------------------------------------- | -------------------------------------------------- |
 | First-party JS     | ≤ 60 KB gzip         | **3.2 KB**                                                          | theme, gallery, résumé, search loader, Astro chunk |
 | Lazy search bundle | not on landing pages | 105.8 KB gzip                                                       | only fetched on `/search`                          |
-| Pages built        | < 3 min              | **~63 pages in 2 s** + Pagefind 0.1 s                               | local M-series laptop                              |
+| Pages built        | < 3 min              | **41 routes in ~1.6 s** + Pagefind 0.1 s                               | local M-series laptop                              |
 | Fonts              | ≤ 120 KB             | Inter Variable + JetBrains Mono Variable, subset by `unicode-range` | self-hosted via Fontsource                         |
 | Colour pairs       | 20/20 pass           | dark accent 5.45:1, muted 5.71:1 on bg                              | see `npm run check:contrast`                       |
 | Content entries    | —                    | 6 projects, 3 posts, 3 notes, 0 photos                              | gallery ships its empty state                      |
