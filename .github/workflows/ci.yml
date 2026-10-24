@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: quality gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Theme tokens
+        run: npm run tokens
+
+      - name: Content contract + contrast + no hard-coded colour
+        run: npm run check:content
+
+      - name: Lint and format check
+        run: npm run lint
+
+      - name: Type and template check
+        run: npm run check
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Build (includes content schema validation)
+        run: npm run build
+
+      - name: JavaScript budget
+        run: node scripts/check-size.mjs
+
+      - name: Internal links
+        run: node scripts/check-links.mjs
+
+      - name: Show build output size
+        run: du -sh dist && find dist -name '*.html' | wc -l
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
