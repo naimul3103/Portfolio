@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Content studio — Md Naimul Islam</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <style>
+      /* The CMS owns the viewport; this is only the pre-boot canvas. */
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #0a0a0f;
+        color: #e8e8ed;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+      }
+      #boot {
+        display: grid;
+        place-content: center;
+        gap: 0.6rem;
+        height: 100%;
+        text-align: center;
+        font-size: 0.9rem;
+      }
+      #boot small {
+        color: #8888a0;
+        font-family: ui-monospace, monospace;
+        font-size: 0.72rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="boot">
+      <span>Opening the content studio…</span>
+      <small>If nothing happens, the CMS bundle failed to load. Check /admin/config.yml.</small>
+    </div>
+    <!-- Self-hosted on purpose: the /admin CSP never needs a third-party script origin. -->
+    <script src="/admin/sveltia-cms.js"></script>
+  </body>
+</html>
