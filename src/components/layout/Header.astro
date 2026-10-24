@@ -4,7 +4,6 @@ import { getNavigation, getSiteConfig } from '../../lib/config';
 const site = getSiteConfig();
 const entries = getNavigation();
 const primary = entries.filter((entry) => entry.primary);
-const secondary = entries.filter((entry) => !entry.primary);
 const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const isActive = (url: string) => path === url || (url !== '/' && path.startsWith(`${url}/`));
 const initials = site.name

@@ -1,7 +1,7 @@
 ---
 import PostCard from '../../../components/blog/PostCard.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getBlogPage, getSeo, getSiteConfig } from '../../../lib/config';
+import { getBlogPage, getSiteConfig } from '../../../lib/config';
 import { getPostsByTag, getPostTags, type Post } from '../../../lib/posts';
 
 export async function getStaticPaths() {
@@ -21,7 +21,7 @@ interface Props {
 
 const { label, posts } = Astro.props as Props;
 const site = getSiteConfig();
-const seo = getSeo();
+
 const page = getBlogPage();
 const title = `#${label} — ${site.name}`;
 const description = `Writing tagged ${label}.`;

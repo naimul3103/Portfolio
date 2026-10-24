@@ -5,8 +5,8 @@ import { slugifyTag } from './format';
 export type Post = CollectionEntry<'blog'>;
 export type Note = CollectionEntry<'notes'>;
 
-const isPublished = (entry: { data: { draft?: boolean } }) =>
-  import.meta.env.DEV || entry.data.draft !== true;
+const isPublished = <T extends { data: object }>(entry: T): boolean =>
+  import.meta.env.DEV || (entry.data as { draft?: boolean }).draft !== true;
 
 export async function getPosts(): Promise<Post[]> {
   const posts = await getCollection('blog', isPublished);
