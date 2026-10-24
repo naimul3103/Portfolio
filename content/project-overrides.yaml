@@ -1,0 +1,48 @@
+# The owner's layer over automation-owned data (content/data/projects.json).
+# Merge rule: override wins. Automation never writes this file, and a CI test
+# proves a refresh cannot clobber it (see src/lib/data.test.ts).
+overrides:
+  - match: ml-internship
+    displayTitle: Week 1 of an applied-ML internship
+    category: open-source
+    featured: false
+  - match: skill-tracker-api
+    displayTitle: Developer Skill Tracker API
+    category: personal
+    featured: true
+  - match: diabetes-prediction-system
+    displayTitle: Diabetes Risk Dashboard
+    category: personal
+    featured: true
+  - match: cryptomaster
+    displayTitle: CryptoMaster
+    category: university
+    featured: true
+  - match: Data_structure
+    displayTitle: Seventy-three C++ implementations
+    category: university
+    featured: false
+  - match: 1_umbrella
+    displayTitle: 1umbrella — Android service booking
+    category: university
+    featured: false
+  # Repositories that are noise on a portfolio: coursework leaves, abandoned
+  # practice repos, and the GitHub profile-config repository.
+  - match: suhaim_tailor_shop
+    hidden: true
+  - match: Diu_Result_Bot
+    hidden: true
+  - match: flower_shop_as1
+    hidden: true
+  - match: A2_Gamer_zone
+    hidden: true
+  - match: Web_Dev
+    hidden: true
+  - match: project
+    hidden: true
+  - match: Programming
+    hidden: true
+  - match: C_programming
+    hidden: true
+  - match: Naimul-Islam1
+    hidden: true

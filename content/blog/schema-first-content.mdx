@@ -1,0 +1,64 @@
+---
+title: Schema-first content, and the bugs it prevents
+description: Astro content collections with glob loaders, strict zod objects, and three content bugs that now fail the build instead of reaching production.
+pubDate: 2026-10-12
+category: technical
+tags: [astro, typescript, zod, content-modelling]
+draft: false
+aiGenerated: false
+comments: "on"
+---
+
+A portfolio is a small content management problem wearing a design costume. The
+interesting part is not the layout — it is the contract between the writing and
+the code that renders it.
+
+## Collections can live outside `src/`
+
+Astro 5's glob loader reads any path, which lets the content directory be a
+plain folder at the repository root. That matters because the content is the
+database, and a database should not live inside the application's source tree.
+
+```ts
+import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
+
+export const projects = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './content/projects' }),
+  schema: z.object({
+    title: z.string().max(110),
+    description: z.string().max(180),
+    category: z.enum(['personal', 'university', 'open-source']),
+    stack: z.array(z.string()).min(1),
+    outcomes: z.array(z.object({
+      claim: z.string(),
+      metric: z.string(),
+      method: z.string(),
+    })).min(1),
+  }).strict(),
+});
+```
+
+`.strict()` is the load-bearing word. Without it, a typo in a field name is
+silently ignored and the page renders with a hole in it. With it, the build
+stops and names the file.
+
+## Three bugs this catches
+
+**A missing measurement.** The outcomes array is required and each item needs a
+metric and a method. A claim without a number cannot be published, which is a
+content rule enforced by a type.
+
+**A cover image with no alt text.** A refinement pair — if `cover` exists,
+`coverAlt` must exist — turns an accessibility guideline into a build error.
+
+**A navigation entry to a page that does not exist.** Zod cannot see this one,
+so it lives in a separate check script that builds a route registry from the
+content files and validates every nav URL against it. Two guards, two classes of
+mistake.
+
+## The rule I keep coming back to
+
+Validation is not bureaucracy when the author is also the developer. It is the
+only reliable way to be honest at scale, because the person writing the copy at
+midnight is not the person who will debug the page next month.

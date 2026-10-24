@@ -1,0 +1,29 @@
+eyebrow: Work
+title: Every project here started as a problem.
+intro: >-
+  No tutorial clones, no todo apps. Each case study states the problem, the
+  decisions I made, the measured outcome, and what I would do differently.
+
+empty:
+  title: Nothing in this filter
+  body: No project matches that stack yet. Clear the filter to see everything.
+  action_label: All projects
+
+filters:
+  all_label: All
+  stack_label: Stack
+  sort_label: Newest first
+
+labels:
+  featured: Featured
+  outcomes: Outcomes
+  evidence: Evidence
+  differently: What I would do differently
+  status:
+    live: Live
+    wip: In progress
+    archived: Archived
+  category:
+    personal: Personal
+    university: University
+    open-source: Open source

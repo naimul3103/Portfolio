@@ -1,0 +1,23 @@
+eyebrow: Gallery
+title: Photographs, eventually.
+intro: >-
+  A gallery should be curated, not filled. This page stays empty until there is
+  a set of images worth the bandwidth.
+
+empty:
+  title: The camera roll is being edited
+  body: >-
+    Photographs are coming — travel, streets, the occasional accidental
+    composition. Until then, the work is the thing to look at.
+  action_label: See the work
+  action_href: /projects
+
+labels:
+  camera: Camera
+  settings: Settings
+  location: Location
+  collection:
+    travel: Travel
+    nature: Nature
+    urban: Urban
+    other: Other

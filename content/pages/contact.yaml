@@ -1,0 +1,36 @@
+eyebrow: Contact
+title: Say what you are building.
+intro: >-
+  I read everything. If you are hiring for an internship or a junior AI/ML or
+  Python role, put the stack and the problem in the first paragraph — that is
+  the part I answer fastest.
+
+channels:
+  email_label: Email
+  github_label: GitHub
+  linkedin_label: LinkedIn
+  response_note: Usually within two working days.
+
+subjects:
+  - Internship or junior role
+  - Freelance project
+  - Collaboration
+  - Something else
+
+form:
+  name_label: Name
+  email_label: Email
+  subject_label: What is this about
+  message_label: Message
+  message_hint: A few sentences is enough. Links are welcome.
+  submit_label: Send message
+  sending_label: Sending…
+  success_title: Sent.
+  success_body: Thank you — I will reply to the address you gave me.
+  error_title: That did not send.
+  error_body: The form is having a bad day. Email me directly instead — the address is above.
+  privacy: Your message is sent to me and nowhere else. No newsletter, no tracking.
+
+empty:
+  title: The form is not wired up in this build
+  body: Email works right now. The form needs one Worker deploy and a Turnstile key.

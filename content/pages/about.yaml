@@ -1,0 +1,51 @@
+eyebrow: About
+title: Curious first, engineer second.
+intro: >-
+  I am a computer science graduate from Bangladesh. I like the moment a vague
+  problem becomes a measurable one — and I have stopped trusting any claim that
+  does not come with a number attached.
+
+story:
+  - >-
+    My first programs were C exercises and a data-structures course. They were
+    not impressive, but they taught me the thing that stuck: a program is a set
+    of decisions, and the interesting part is why each one was made.
+  - >-
+    Later that turned into Python, then machine learning. What I enjoy is not
+    the model fit — it is the framing: which rows are leaking, which metric
+    actually matches the decision, what happens when the feature is missing.
+    A 0.75 ROC AUC means nothing until you know what the alternative costs.
+  - >-
+    I also care about the delivery half. Most of what I have built ends as a
+    service someone else has to run: a schema that rejects bad input, an error
+    path that explains itself, a README that says how to start it. That is the
+    difference between a notebook and a project.
+
+quote: The model is the easy part to demo. The decisions are the hard part to defend.
+
+values:
+  - title: Evidence over adjectives
+    body: If I cannot measure it, I say so. Every case study on this site names its method.
+  - title: Finish the small thing
+    body: A shipped 200-line tool beats an abandoned 2,000-line architecture.
+  - title: Write it down
+    body: Documentation is how a decision survives contact with future me.
+
+beyond:
+  title: Beyond the keyboard
+  intro: The parts of life that do not fit in a commit.
+  reading_title: On the desk
+  reading_note: One book at a time, slowly.
+  anime_title: Screen time
+  anime_note: Nothing worth listing yet.
+  gallery_title: Through a lens
+  gallery_note: A gallery is coming when there are photographs worth showing.
+
+closing:
+  title: Where I am heading
+  body: >-
+    Toward applied machine learning in a team that ships: retrieval, evaluation,
+    and the unglamorous engineering that keeps a model useful after the demo.
+  cta:
+    label: See the work
+    href: /projects

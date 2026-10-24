@@ -1,0 +1,75 @@
+---
+title: The portfolio is a build, not a poster
+description: Why this site is static, what the JavaScript budget actually buys, and the three decisions I would defend in an interview.
+pubDate: 2026-10-24
+category: technical
+tags: [astro, architecture, performance, static-site]
+draft: false
+aiGenerated: false
+comments: "on"
+---
+
+Most portfolios are a screenshot of work. This one is meant to survive being
+opened by someone who will ask "why". That constraint changed the stack more
+than any aesthetic decision.
+
+## Decision 1 — static output, even though the site is dynamic in spirit
+
+The site has search, filters, a résumé builder and a chat surface planned. None
+of those need a server at request time. Astro renders HTML at build time, the
+search index is generated from that HTML, and the only runtime logic is a small
+Worker for the contact form.
+
+The trade is honest: publishing means a commit, not a database write. For a
+personal site with one author, that is a feature. The content lives in git, so
+every edit has a diff, a review and a rollback.
+
+## Decision 2 — content is schema-validated, not just markdown
+
+Every project entry has required fields, and two of them are deliberately
+awkward:
+
+```ts
+outcomes: z.array(z.object({
+  claim: z.string().min(1),
+  metric: z.string().min(1),
+  method: z.string().min(1),
+})).min(1),
+whatIdDoDifferently: z.string().min(80),
+```
+
+A build fails if I write "made it faster" without a number, or if I cannot fill
+eighty characters about what I got wrong. That is the whole point: the schema
+refuses the sentence I would otherwise be tempted to write at 1 a.m.
+
+## Decision 3 — a JavaScript budget, enforced by the build
+
+The target is under 60 KB of first-party JavaScript on the worst page. Today the
+home page ships none: the theme toggle is a twelve-line file loaded in the head,
+the nav uses `<details>`, and the scroll reveals are CSS `animation-timeline`
+where the browser supports it.
+
+That last one is worth a paragraph. Scroll-driven animation used to mean an
+IntersectionObserver, a class toggle and a hydration boundary. In a modern
+browser it is nine lines of CSS and zero bytes of JavaScript:
+
+```css
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 22%;
+  }
+}
+```
+
+Where it is not supported, nothing happens. The content is already visible —
+progressive enhancement in the literal sense, not a polyfill.
+
+## What I would do differently
+
+I would write the contrast gate before the palette. I picked an accent that
+looked right and failed WCAG on the elevated surface by a hair — 4.32:1 against
+a 4.5:1 floor. The fix took one line; noticing it took a CI script, not an eye.
+
+That is the pattern I want to keep: taste proposes, the build disposes.

@@ -1,0 +1,53 @@
+---
+title: When the data contradicts the notebook
+description: A 30,000-row search dataset, a supplied narrative about CTR and position, and a correlation of minus 0.073 that refused to cooperate.
+pubDate: 2026-09-28
+category: learning-journey
+tags: [machine-learning, evaluation, data-analysis]
+draft: false
+aiGenerated: false
+comments: "on"
+---
+
+The first week of an applied-ML internship handed me a notebook and a dataset:
+30,000 anonymised content rows, with impressions, position, click-through rate
+and a declining label. The notebook walked through a first look and stated a
+familiar story — CTR falls as average position gets worse.
+
+I ran the numbers. The story did not survive.
+
+## What the data said
+
+Three checks, each one a single cell:
+
+| Question | Result | Reading |
+|---|---|---|
+| Does search volume explain impressions? | r = 0.001 | No relationship at all |
+| Does position explain CTR? | r = −0.073 | Almost independent |
+| Where is the worst CTR? | 0.000, top-3 comparison articles | Not where the narrative points |
+
+The first result needed a filter to be meaningful: rows with zero impressions
+make the correlation look like something it is not. Restricting to
+`impressions_90d > 0` changed the coefficient from 0.001 to 0.001 — the rare case
+where the filter confirms the null result instead of rescuing it.
+
+## Why this was uncomfortable
+
+The notebook was written by people more experienced than me, and it came with a
+narrative that made sense. The temptation is to find the cut of the data that
+reproduces the expected answer. Position tiers, content types, a subset of
+traffic — somewhere there is always a slice that agrees.
+
+The discipline is to decide the question before looking, and then to report the
+answer even when it is boring. "These two variables are unrelated in this
+dataset" is a finding. It is just not a headline.
+
+## What I would do differently
+
+I edited the supplied notebook instead of working in my own copy, so my analysis
+is buried in a template and a reviewer has to dig for it. Keep your own work in
+your own files, even when the exercise invites you to edit theirs.
+
+The second thing: I would write the research question first. I did the analysis
+first and reverse-engineered the question afterwards, which is how you end up
+with three interesting results and no argument connecting them.
