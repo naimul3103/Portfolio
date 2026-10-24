@@ -1,0 +1,15 @@
+# Résumé template switch. The visitor can toggle unless allow_visitor_toggle is false.
+active: standard # standard | europass
+allow_visitor_toggle: true
+templates:
+  standard:
+    label: Standard
+    description: One page, ATS-friendly, single column.
+  europass:
+    label: Europass
+    description: European CV layout with a skills passport.
+europass:
+  language: en
+  photo: false
+  birth_date: false
+  nationality: ""

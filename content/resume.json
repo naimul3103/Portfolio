@@ -1,0 +1,109 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
+  "basics": {
+    "name": "Md Naimul Islam",
+    "label": "AI/ML Engineer",
+    "email": "naim.islam8761@gmail.com",
+    "url": "https://naimul3103.pages.dev",
+    "summary": "Computer science graduate building machine-learning models and the Python services around them. Comfortable from data cleaning and model evaluation to a documented FastAPI endpoint. Looking for a first role where the work is judged by what ships.",
+    "location": {
+      "city": "Dhaka",
+      "countryCode": "BD"
+    },
+    "profiles": [
+      {
+        "network": "GitHub",
+        "username": "naimul3103",
+        "url": "https://github.com/naimul3103"
+      },
+      {
+        "network": "LinkedIn",
+        "username": "naimul3103",
+        "url": "https://www.linkedin.com/in/naimul3103/"
+      }
+    ]
+  },
+  "work": [],
+  "education": [
+    {
+      "institution": "Daffodil International University",
+      "url": "https://daffodilvarsity.edu.bd",
+      "area": "Computer Science & Engineering",
+      "studyType": "B.Sc.",
+      "endDate": "2026",
+      "location": "Dhaka, Bangladesh"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Diabetes Risk Dashboard",
+      "description": "Gradio app serving a scikit-learn pipeline, deployed on Hugging Face Spaces with its own test metrics.",
+      "url": "https://naimul3103-diabetes-prediction-system-for-women.hf.space",
+      "highlights": [
+        "0.7597 accuracy and 0.8311 ROC-AUC on a stratified 20% hold-out",
+        "0.8446 cross-validated ROC-AUC with imputation inside the pipeline",
+        "Model artifact stores its own metrics; the UI cannot display a number the file does not contain"
+      ],
+      "keywords": ["Python", "scikit-learn", "Gradio"]
+    },
+    {
+      "name": "Developer Skill Tracker API",
+      "description": "Layered FastAPI service for skills and learning journals with referential integrity and generated documentation.",
+      "url": "https://github.com/naimul3103/skill-tracker-api",
+      "highlights": [
+        "12 routes across two resources with Pydantic v2 validation",
+        "RESTRICT-style delete guard prevents orphaned journal entries",
+        "Partial updates via model_dump(exclude_unset=True)"
+      ],
+      "keywords": ["FastAPI", "Pydantic", "REST"]
+    },
+    {
+      "name": "CryptoMaster",
+      "description": "University team project: PHP/MySQL backend for a crypto dashboard with a virtual wallet.",
+      "url": "https://github.com/naimul3103/cryptomaster",
+      "highlights": [
+        "13 API actions over Binance public market data, capped at 120 USDT pairs",
+        "PDO prepared statements throughout; bcrypt cost 12; session ID regeneration",
+        "Owned the backend and database in a team of three"
+      ],
+      "keywords": ["PHP", "MySQL", "Security"]
+    }
+  ],
+  "skills": [
+    {
+      "name": "Machine Learning",
+      "level": "Working",
+      "keywords": [
+        "scikit-learn",
+        "pandas",
+        "NumPy",
+        "model evaluation",
+        "feature engineering",
+        "cross-validation"
+      ]
+    },
+    {
+      "name": "Backend",
+      "level": "Working",
+      "keywords": ["FastAPI", "Pydantic v2", "REST", "Uvicorn", "SQL", "authentication"]
+    },
+    {
+      "name": "Languages",
+      "level": "Working",
+      "keywords": ["Python", "C", "C++", "Java", "JavaScript", "SQL"]
+    },
+    {
+      "name": "Tooling",
+      "level": "Working",
+      "keywords": ["Git", "GitHub Actions", "Linux", "Docker (learning)", "Hugging Face Spaces"]
+    }
+  ],
+  "languages": [
+    { "language": "Bengali", "fluency": "Native speaker" },
+    { "language": "English", "fluency": "Professional working proficiency" }
+  ],
+  "interests": [
+    { "name": "Reading", "keywords": ["systems design", "machine learning"] },
+    { "name": "Photography", "keywords": ["street", "travel"] }
+  ]
+}
